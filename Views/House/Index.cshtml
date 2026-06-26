@@ -1,0 +1,68 @@
+@model IEnumerable<house_renting.Models.House>
+@{
+    ViewData["Title"] = "Available Houses";
+    var currentType = ViewBag.CurrentType as string;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Available Houses</h2>
+    @if (User.IsInRole("Landlord"))
+    {
+        <a href="/House/Create" class="btn btn-success">+ Add New House</a>
+    }
+</div>
+
+<div class="mb-4">
+    <div class="btn-group flex-wrap" role="group">
+        <a href="/House" class="btn @(currentType == null ? "btn-dark" : "btn-outline-dark")">All</a>
+        @foreach (var type in new[] { "House", "Villa", "Condo", "Apartment", "Studio" })
+        {
+            <a href="/House?type=@type" class="btn @(currentType == type ? "btn-dark" : "btn-outline-dark")">@type</a>
+        }
+    </div>
+</div>
+
+<div class="row">
+    @foreach (var house in Model)
+    {
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                @if (!string.IsNullOrEmpty(house.ImageUrl))
+                {
+                    <img src="@house.ImageUrl" class="card-img-top" style="height:200px; object-fit:cover;" alt="@house.Title" />
+                }
+                else
+                {
+                    <div class="bg-secondary text-white d-flex align-items-center justify-content-center" style="height:200px;">
+                        <span>No Image</span>
+                    </div>
+                }
+                <div class="card-body">
+                    <span class="badge bg-warning text-dark mb-2">@house.HouseType</span>
+                    <h5 class="card-title">@house.Title</h5>
+                    <p class="text-muted">📍 @house.Address, @house.City</p>
+                    <p class="fw-bold text-success">$@house.Price / month</p>
+                    <p class="text-muted">🛏 @house.Bedrooms Bedrooms | 🚿 @house.Bathrooms Bathrooms</p>
+                </div>
+                <div class="card-footer d-flex gap-2">
+                    <a href="/House/Details/@house.HouseId" class="btn btn-primary flex-grow-1">View Details</a>
+                    @if (User.IsInRole("Landlord"))
+                    {
+                        <a href="/House/Edit/@house.HouseId" class="btn btn-warning">Edit</a>
+                        <form method="post" action="/House/Delete/@house.HouseId" class="d-inline">
+                            <button type="submit" class="btn btn-danger" onclick="return confirm('Delete this house?')">Delete</button>
+                        </form>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@if (!Model.Any())
+{
+    <div class="text-center mt-5">
+        <p class="text-muted">No houses available for this type.</p>
+        <a href="/House" class="btn btn-outline-dark">View All</a>
+    </div>
+}

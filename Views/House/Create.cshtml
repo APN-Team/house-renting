@@ -1,0 +1,65 @@
+@{
+    ViewData["Title"] = "Add New House";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-7">
+        <div class="card shadow">
+            <div class="card-body p-4">
+                <h3 class="mb-4">Add New House</h3>
+                <form method="post" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label class="form-label">Title</label>
+                        <input type="text" name="Title" class="form-control" placeholder="e.g. Modern Villa in Phnom Penh" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea name="Description" class="form-control" rows="3" placeholder="Describe the house..."></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">House Type</label>
+                        <select name="HouseType" class="form-select">
+                            <option value="House">House</option>
+                            <option value="Villa">Villa</option>
+                            <option value="Condo">Condo</option>
+                            <option value="Apartment">Apartment</option>
+                            <option value="Studio">Studio</option>
+                        </select>
+                    </div>
+                    <div class="row">
+                        <div class="col mb-3">
+                            <label class="form-label">Address</label>
+                            <input type="text" name="Address" class="form-control" required />
+                        </div>
+                        <div class="col mb-3">
+                            <label class="form-label">City</label>
+                            <input type="text" name="City" class="form-control" required />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col mb-3">
+                            <label class="form-label">Price per month ($)</label>
+                            <input type="number" name="Price" class="form-control" step="0.01" required />
+                        </div>
+                        <div class="col mb-3">
+                            <label class="form-label">Bedrooms</label>
+                            <input type="number" name="Bedrooms" class="form-control" required />
+                        </div>
+                        <div class="col mb-3">
+                            <label class="form-label">Bathrooms</label>
+                            <input type="number" name="Bathrooms" class="form-control" required />
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">House Image</label>
+                        <input type="file" name="imageFile" class="form-control" accept="image/*" />
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-success">Add House</button>
+                        <a href="/House" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

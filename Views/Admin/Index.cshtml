@@ -1,0 +1,46 @@
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<h2 class="mb-4">Admin Dashboard</h2>
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card text-white bg-primary text-center shadow">
+            <div class="card-body">
+                <h2>@ViewBag.TotalUsers</h2>
+                <p class="mb-0">Total Users</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-success text-center shadow">
+            <div class="card-body">
+                <h2>@ViewBag.TotalHouses</h2>
+                <p class="mb-0">Total Houses</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-info text-center shadow">
+            <div class="card-body">
+                <h2>@ViewBag.TotalRequests</h2>
+                <p class="mb-0">Total Requests</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-warning text-center shadow">
+            <div class="card-body">
+                <h2>@ViewBag.PendingRequests</h2>
+                <p class="mb-0">Pending Requests</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex gap-3">
+    <a href="/Admin/Users" class="btn btn-outline-primary">👥 Manage Users</a>
+    <a href="/Admin/Houses" class="btn btn-outline-success">🏠 Manage Houses</a>
+    <a href="/Admin/Requests" class="btn btn-outline-info">📋 View All Requests</a>
+</div>

@@ -1,0 +1,69 @@
+@model house_renting.Models.House
+@{
+    ViewData["Title"] = @Model.Title;
+}
+
+@if (!string.IsNullOrEmpty(Model.ImageUrl))
+{
+    <img src="@Model.ImageUrl" class="w-100 rounded mb-4" style="max-height:400px; object-fit:cover;" alt="@Model.Title" />
+}
+
+<div class="row">
+    <div class="col-md-8">
+        <span class="badge bg-warning text-dark mb-2">@Model.HouseType</span>
+        <h2>@Model.Title</h2>
+        <p class="text-muted">📍 @Model.Address, @Model.City</p>
+        <p>@Model.Description</p>
+        <hr />
+        <div class="row text-center">
+            <div class="col">
+                <h5>🛏 @Model.Bedrooms</h5>
+                <small class="text-muted">Bedrooms</small>
+            </div>
+            <div class="col">
+                <h5>🚿 @Model.Bathrooms</h5>
+                <small class="text-muted">Bathrooms</small>
+            </div>
+            <div class="col">
+                <h5 class="text-success">$@Model.Price</h5>
+                <small class="text-muted">Per month</small>
+            </div>
+            <div class="col">
+                <h5>@Model.Status</h5>
+                <small class="text-muted">Status</small>
+            </div>
+        </div>
+        <hr />
+        <p>🏠 Landlord: <strong>@Model.Landlord?.FullName</strong></p>
+
+        @if (User.IsInRole("Tenant"))
+        {
+            <a href="/Rental/Create/@Model.HouseId" class="btn btn-success me-2">Request to Rent</a>
+            <a href="/Review/Create/@Model.HouseId" class="btn btn-outline-secondary">Leave a Review</a>
+        }
+    </div>
+</div>
+
+<hr />
+<h4 class="mt-4">Reviews (@Model.Reviews.Count)</h4>
+
+@if (!Model.Reviews.Any())
+{
+    <p class="text-muted">No reviews yet.</p>
+}
+
+@foreach (var review in Model.Reviews.OrderByDescending(r => r.CreatedAt))
+{
+    <div class="card mb-3">
+        <div class="card-body">
+            <p class="mb-1">
+                @for (int i = 0; i < review.Rating; i++) { <span>⭐</span> }
+                <span class="text-muted">(@review.Rating/5)</span>
+            </p>
+            <p class="mb-1">@review.Comment</p>
+            <small class="text-muted">@review.CreatedAt.ToShortDateString()</small>
+        </div>
+    </div>
+}
+
+<a href="/House" class="btn btn-outline-dark mt-3">← Back to listings</a>

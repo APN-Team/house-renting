@@ -1,0 +1,43 @@
+@model IEnumerable<house_renting.Models.RentalRequest>
+@{
+    ViewData["Title"] = "My Requests";
+}
+
+<h2 class="mb-4">My Rental Requests</h2>
+
+@if (!Model.Any())
+{
+    <div class="text-center mt-5">
+        <p class="text-muted">You have no rental requests yet.</p>
+        <a href="/House" class="btn btn-primary">Browse Houses</a>
+    </div>
+}
+
+@foreach (var request in Model)
+{
+    <div class="card mb-3 shadow-sm">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">@request.House?.Title</h5>
+                @if (request.Status == "Approved")
+                {
+                    <span class="badge bg-success">Approved</span>
+                }
+                else if (request.Status == "Rejected")
+                {
+                    <span class="badge bg-danger">Rejected</span>
+                }
+                else
+                {
+                    <span class="badge bg-warning text-dark">Pending</span>
+                }
+            </div>
+            <hr />
+            <p class="mb-1">📅 From: <strong>@request.StartDate.ToShortDateString()</strong> To: <strong>@request.EndDate.ToShortDateString()</strong></p>
+            <p class="mb-1">💬 Message: @request.Message</p>
+            <small class="text-muted">Requested on @request.RequestDate.ToShortDateString()</small>
+        </div>
+    </div>
+}
+
+<a href="/House" class="btn btn-outline-dark mt-2">Browse Houses</a>
