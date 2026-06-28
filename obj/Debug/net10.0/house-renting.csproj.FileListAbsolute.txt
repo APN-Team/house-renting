@@ -139,7 +139,6 @@
 /Users/chhunmenghour/Desktop/house-renting/obj/Debug/net10.0/scopedcss/Views/Shared/_Layout.cshtml.rz.scp.css
 /Users/chhunmenghour/Desktop/house-renting/obj/Debug/net10.0/scopedcss/bundle/house-renting.styles.css
 /Users/chhunmenghour/Desktop/house-renting/obj/Debug/net10.0/scopedcss/projectbundle/house-renting.bundle.scp.css
-/Users/chhunmenghour/Desktop/house-renting/obj/Debug/net10.0/compressed/aq2hnynrdb-{0}-b9sayid5wm-b9sayid5wm.gz
 /Users/chhunmenghour/Desktop/house-renting/obj/Debug/net10.0/compressed/n0hpsm8gi6-{0}-61n19gt1b8-61n19gt1b8.gz
 /Users/chhunmenghour/Desktop/house-renting/obj/Debug/net10.0/compressed/85fvvm4khf-{0}-xtxxf3hu2r-xtxxf3hu2r.gz
 /Users/chhunmenghour/Desktop/house-renting/obj/Debug/net10.0/compressed/dxkttupmj2-{0}-bqjiyaj88i-bqjiyaj88i.gz
@@ -219,3 +218,4 @@
 /Users/chhunmenghour/Desktop/house-renting/bin/Debug/net10.0/Swashbuckle.AspNetCore.SwaggerGen.dll
 /Users/chhunmenghour/Desktop/house-renting/bin/Debug/net10.0/Swashbuckle.AspNetCore.SwaggerUI.dll
 /Users/chhunmenghour/Desktop/house-renting/obj/Debug/net10.0/house-renting.MvcApplicationPartsAssemblyInfo.cs
+/Users/chhunmenghour/Desktop/house-renting/obj/Debug/net10.0/compressed/aq2hnynrdb-{0}-gpf2opm2s7-gpf2opm2s7.gz

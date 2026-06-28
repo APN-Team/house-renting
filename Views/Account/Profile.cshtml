@@ -1,0 +1,58 @@
+@model house_renting.Models.ApplicationUser
+@{
+    ViewData["Title"] = "My Profile";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-body p-4 text-center">
+
+                <div class="mb-3">
+                    <div style="width:80px; height:80px; border-radius:50%; background-color:#3a6ea8; color:white; font-size:2rem; display:flex; align-items:center; justify-content:center; margin:0 auto;">
+                        @Model.FullName.Substring(0, 1).ToUpper()
+                    </div>
+                </div>
+
+                <h4>@Model.FullName</h4>
+                <span class="badge bg-primary mb-3">@Model.Role</span>
+
+                <hr />
+
+                <div class="text-start">
+                    <div class="mb-3">
+                        <label class="form-label">Full Name</label>
+                        <p class="form-control bg-light">@Model.FullName</p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <p class="form-control bg-light">@Model.Email</p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Role</label>
+                        <p class="form-control bg-light">@Model.Role</p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Member Since</label>
+                        <p class="form-control bg-light">@Model.CreatedAt.ToLongDateString()</p>
+                    </div>
+                </div>
+
+                @if (Model.Role == "Tenant")
+                {
+                    <a href="/Rental/MyRequests" class="btn btn-primary w-100 mt-2">View My Requests</a>
+                }
+                else if (Model.Role == "Landlord")
+                {
+                    <a href="/House" class="btn btn-primary w-100 mt-2">View My Houses</a>
+                    <a href="/Rental/Manage" class="btn btn-outline-dark w-100 mt-2">Manage Requests</a>
+                }
+                else if (Model.Role == "Admin")
+                {
+                    <a href="/Admin" class="btn btn-primary w-100 mt-2">Go to Dashboard</a>
+                }
+
+            </div>
+        </div>
+    </div>
+</div>

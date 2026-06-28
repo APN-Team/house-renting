@@ -19,4 +19,5 @@ public class House
     public ApplicationUser? Landlord { get; set; }
     public ICollection<RentalRequest> RentalRequests { get; set; } = new List<RentalRequest>();
     public ICollection<Review> Reviews { get; set; } = new List<Review>();
+    public ICollection<HouseImage> HouseImages { get; set; } = new List<HouseImage>();
 }

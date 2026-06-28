@@ -51,8 +51,14 @@
                         </div>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">House Image</label>
+                        <label class="form-label">Main Image</label>
                         <input type="file" name="imageFile" class="form-control" accept="image/*" />
+                        <small class="text-muted">This will be the cover photo</small>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Gallery Images (Bedroom, Bathroom, Kitchen...)</label>
+                        <input type="file" name="galleryFiles" class="form-control" accept="image/*" multiple />
+                        <small class="text-muted">Hold Cmd (Mac) to select multiple images at once</small>
                     </div>
                     <div class="d-flex gap-2">
                         <button type="submit" class="btn btn-success">Add House</button>

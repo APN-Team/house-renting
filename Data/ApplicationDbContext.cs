@@ -13,6 +13,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<RentalRequest> RentalRequests { get; set; }
     public DbSet<Payment> Payments { get; set; }
     public DbSet<Review> Reviews { get; set; }
+    public DbSet<HouseImage> HouseImages { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -59,5 +60,11 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
             .WithMany(h => h.Reviews)
             .HasForeignKey(r => r.HouseId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<HouseImage>()
+        .HasOne(i => i.House)
+        .WithMany(h => h.HouseImages)
+        .HasForeignKey(i => i.HouseId)
+        .OnDelete(DeleteBehavior.Cascade);
     }
 }

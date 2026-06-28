@@ -21,18 +21,30 @@ public class HouseController : Controller
     }
 
     // GET: /House
-    public async Task<IActionResult> Index(string? type)
+   public async Task<IActionResult> Index(string? type, string? city)
     {
-    var query = _context.Houses
-        .Where(h => h.Status == "Available")
-        .Include(h => h.Landlord)
-        .AsQueryable();
+        var query = _context.Houses
+            .Where(h => h.Status == "Available")
+            .Include(h => h.Landlord)
+            .AsQueryable();
 
-    if (!string.IsNullOrEmpty(type))
-        query = query.Where(h => h.HouseType == type);
+        if (!string.IsNullOrEmpty(type))
+            query = query.Where(h => h.HouseType == type);
 
-    ViewBag.CurrentType = type;
-    return View(await query.ToListAsync());
+        if (!string.IsNullOrEmpty(city))
+            query = query.Where(h => h.City == city);
+
+        var cities = await _context.Houses
+            .Where(h => h.Status == "Available")
+            .Select(h => h.City)
+            .Distinct()
+            .ToListAsync();
+
+        ViewBag.CurrentType = type;
+        ViewBag.CurrentCity = city;
+        ViewBag.Cities = cities;
+
+        return View(await query.ToListAsync());
     }
 
     // GET: /House/Details/5
@@ -41,6 +53,7 @@ public class HouseController : Controller
         var house = await _context.Houses
             .Include(h => h.Landlord)
             .Include(h => h.Reviews)
+            .Include(h => h.HouseImages)
             .FirstOrDefaultAsync(h => h.HouseId == id);
 
         if (house == null) return NotFound();
@@ -54,7 +67,7 @@ public class HouseController : Controller
     // POST: /House/Create
     [Authorize(Roles = "Landlord")]
     [HttpPost]
-    public async Task<IActionResult> Create(House house, IFormFile? imageFile)
+    public async Task<IActionResult> Create(House house, IFormFile? imageFile, IFormFileCollection? galleryFiles)
     {
         var user = await _userManager.GetUserAsync(User);
         house.LandlordId = user!.Id;
@@ -74,6 +87,31 @@ public class HouseController : Controller
 
         _context.Houses.Add(house);
         await _context.SaveChangesAsync();
+
+        if (galleryFiles != null && galleryFiles.Count > 0)
+        {
+            foreach (var file in galleryFiles)
+            {
+                if (file.Length > 0)
+                {
+                    var uploadsFolder = Path.Combine(_env.WebRootPath, "uploads");
+                    Directory.CreateDirectory(uploadsFolder);
+                    var fileName = Guid.NewGuid() + Path.GetExtension(file.FileName);
+                    var filePath = Path.Combine(uploadsFolder, fileName);
+                    using var stream = new FileStream(filePath, FileMode.Create);
+                    await file.CopyToAsync(stream);
+
+                    _context.HouseImages.Add(new HouseImage
+                    {
+                        HouseId = house.HouseId,
+                        ImageUrl = "/uploads/" + fileName,
+                        Caption = file.FileName
+                    });
+                }
+            }
+            await _context.SaveChangesAsync();
+        }
+
         return RedirectToAction(nameof(Index));
     }
 

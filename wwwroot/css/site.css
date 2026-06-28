@@ -1,31 +1,461 @@
-html {
-  font-size: 14px;
-}
-
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
-}
-
+/* ── Global ── */
 body {
-  margin-bottom: 60px;
+    background-color: #f0f5fb;
+    font-family: 'Segoe UI', sans-serif;
+    color: #3d3d3d;
 }
 
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
+/* ── Navbar ── */
+.navbar {
+    background-color: #3a6ea8 !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
 }
 
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
+.navbar-brand {
+    color: #fff !important;
+    font-size:1.8rem;
+    font-weight:700;
+}
+
+.nav-link {
+    color: #d0e4f7 !important;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.nav-link:hover {
+    color: #ffffff !important;
+}
+
+/* ── Active nav link ── */
+.nav-link.active-link {
+    color: #ffffff !important;
+    font-weight: 600;
+    border-bottom: 2px solid #ffffff;
+    padding-bottom: 2px;
+}
+
+/* ===========================
+   Top Row
+=========================== */
+
+.navbar-top {
+    padding: 15px 0;
+}
+
+.search-box {
+    width: 450px;
+}
+
+.search-box input {
+    border-radius: 30px;
+    padding: 10px 20px;
+}
+
+/* ===========================
+   Bottom Row
+=========================== */
+
+.navbar-bottom {
+    border-top: 1px solid rgba(255,255,255,.2);
+    padding: 8px 0;
+}
+
+.navbar-bottom .navbar-nav {
+    gap: 20px;
+}
+
+.navbar-bottom .nav-link {
+    padding-bottom: 10px;
+}
+
+/* Active link */
+.nav-link.active-link {
+    color: #fff !important;
+    border-bottom: 3px solid #fff;
+}
+
+/* Buttons */
+.nav-btn {
+    min-width: 100px;
+    border-radius: 50px;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+
+    .navbar-top {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .search-box {
+        width: 100%;
+    }
+
+    .navbar-bottom .navbar-nav {
+        gap: 10px;
+    }
+}
+
+/* ── Mobile Bottom Nav ── */
+.bottom-nav-item {
+    color: #888;
+    padding: 4px 12px;
+    transition: color 0.2s;
+}
+
+.bottom-nav-item:hover,
+.bottom-nav-item.active {
+    color: #3a6ea8;
+}
+
+/* ── Hero Section ── */
+.hero-section {
+    background: linear-gradient(135deg, #3a6ea8, #7aafd4);
+    color: white;
+    border-radius: 16px;
+    padding: 60px 40px;
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.hero-section h1 {
+    font-size: 2.8rem;
+    font-weight: 700;
+}
+
+.hero-section p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+/* ── Cards ── */
+.card {
+    border: none;
+    border-radius: 14px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    transition: transform 0.2s, box-shadow 0.2s;
+    background-color: #ffffff;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+}
+
+.card-img-top {
+    border-radius: 14px 14px 0 0;
+}
+
+.card-footer {
+    background-color: #eef4fb;
+    border-top: 1px solid #d0e4f7;
+    border-radius: 0 0 14px 14px;
+}
+
+/* ── Buttons ── */
+.btn-primary {
+    background-color: white;
+    border-color: gray;
+    border-radius: 8px;
+    color: black;
+}
+
+.btn-outline-primary{
+    background-color: white;
+    color: black;
+    border-color: gray;
+}
+.btn-outline-primary:hover{
+    background-color: #aaaabc;
+    border-color: white;
+    color: black;
+}
+
+
+.btn-primary:hover {
+    background-color: #aaaabc;
+    border-color: gray;
+    color: black;
+}
+
+.btn-success {
+    background-color: #7aafd4;
+    border-color: #7aafd4;
+    border-radius: 8px;
+    color: #fff;
+}
+
+.btn-success:hover {
+    background-color: #3a6ea8;
+    border-color: #3a6ea8;
+}
+
+.btn-warning {
+    background-color: #eddcd2;
+    border-color: #eddcd2;
+    border-radius: 8px;
+    color: #3d3d3d;
+}
+
+.btn-warning:hover {
+    background-color: #e8d1c5;
+    border-color: #e8d1c5;
+}
+
+.btn-danger {
+    background-color: #e07070;
+    border-color: #e07070;
+    border-radius: 8px;
+}
+
+.btn-danger:hover {
+    background-color: #c05050;
+    border-color: #c05050;
+}
+
+.btn-outline-dark {
+    border-color: #3a6ea8;
+    color: #3a6ea8;
+    border-radius: 8px;
+}
+
+.btn-outline-dark:hover {
+    background-color: #3a6ea8;
+    color: #fff;
+}
+
+.btn-dark {
+    background-color: #3a6ea8;
+    border-color: #3a6ea8;
+    border-radius: 8px;
+}
+
+.btn-dark:hover {
+    background-color: #2a5a8a;
+    border-color: #2a5a8a;
+    color: #fff;
+}
+
+/* ── Filter Buttons ── */
+.btn-group .btn {
+    border-radius: 20px !important;
+    margin-right: 6px;
+    padding: 6px 18px;
+    font-size: 0.9rem;
+}
+
+/* ── Badges ── */
+.badge {
+    border-radius: 20px;
+    padding: 6px 12px;
+    font-size: 0.8rem;
+}
+
+.bg-warning {
+    background-color: #f0c060 !important;
+    color: #3d3d3d !important;
+}
+
+.bg-success {
+    background-color: #7aafd4 !important;
+}
+
+.bg-danger {
+    background-color: #e07070 !important;
+}
+
+.bg-primary {
+    background-color: #3a6ea8 !important;
+}
+
+.bg-info {
+    background-color: #a8d4f0 !important;
+    color: #3d3d3d !important;
+}
+
+/* ── Forms ── */
+.form-control, .form-select {
+    border-radius: 8px;
+    border: 1px solid #b0cce8;
+    background-color: #f8fbff;
+    padding: 10px 14px;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #3a6ea8;
+    box-shadow: 0 0 0 0.2rem rgba(58,110,168,0.2);
+}
+
+.form-label {
+    font-weight: 500;
+    color: #3a6ea8;
+}
+
+/* ── Tables ── */
+.table {
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #fff;
+}
+
+.table thead th {
+    background-color: #3a6ea8;
+    color: white;
+    border: none;
+    padding: 14px;
+}
+
+.table tbody tr:hover {
+    background-color: #eef4fb;
+}
+
+.table td {
+    padding: 12px 14px;
+    vertical-align: middle;
+}
+
+/* ── Footer ── */
+footer {
+    background-color: #3a6ea8 !important;
+    color: #d0e4f7 !important;
+    margin-top: 60px;
+}
+
+/* ── Page titles ── */
+h2 {
+    color: #3a6ea8;
+    font-weight: 600;
+}
+
+h3 {
+    color: #2a5a8a;
+}
+
+/* ── Text colors ── */
+.text-success {
+    color: #3a6ea8 !important;
+}
+
+.text-muted {
+    color: #7a9ab8 !important;
+}
+
+/* ── Alert ── */
+.alert-danger {
+    background-color: #fde8e8;
+    border-color: #e07070;
+    color: #c05050;
+    border-radius: 8px;
+}
+
+/* ── No image placeholder ── */
+.no-image {
+    background-color: #d0e4f7;
+    color: #3a6ea8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    border-radius: 14px 14px 0 0;
+    font-size: 1rem;
+}
+
+/* ── Admin Dashboard Cards ── */
+.card.text-white.bg-primary {
+    background-color: #3a6ea8 !important;
+}
+
+.card.text-white.bg-success {
+    background-color: #7aafd4 !important;
+}
+
+.card.text-white.bg-info {
+    background-color: #a8d4f0 !important;
+    color: #3d3d3d !important;
+}
+
+.card.text-white.bg-warning {
+    background-color: #f0c060 !important;
+    color: #3d3d3d !important;
+}
+
+/* ── Mobile Responsive ── */
+@media (max-width: 768px) {
+    .container {
+        padding: 0 12px;
+    }
+
+    /* Cards full width on mobile */
+    .col-md-4 {
+        width: 100% !important;
+    }
+
+    /* House cards stack vertically */
+    .row {
+        margin: 0;
+    }
+
+    /* Smaller headings on mobile */
+    h2 {
+        font-size: 1.4rem;
+    }
+
+    h3 {
+        font-size: 1.2rem;
+    }
+
+    /* Hero section smaller on mobile */
+    .hero-section {
+        padding: 30px 20px;
+    }
+
+    .hero-section h1 {
+        font-size: 1.8rem;
+    }
+
+    /* Filter buttons wrap nicely */
+    .btn-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .btn-group .btn {
+        flex: 0 0 auto;
+    }
+
+    /* Table scroll on mobile */
+    .table-responsive {
+        overflow-x: auto;
+    }
+
+    /* Forms full width */
+    .col-md-6, .col-md-7, .col-md-5 {
+        width: 100% !important;
+    }
+
+    /* Admin dashboard cards 2 per row */
+    .col-md-3 {
+        width: 50% !important;
+    }
+
+    /* Main content bottom padding for mobile nav */
+    main {
+        padding-bottom: 80px !important;
+    }
+
+    /* House details image */
+    .carousel {
+        border-radius: 0;
+    }
+
+    /* Profile card full width */
+    .col-md-6 {
+        width: 100% !important;
+    }
 }
