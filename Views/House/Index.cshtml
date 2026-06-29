@@ -3,10 +3,11 @@
     ViewData["Title"] = "Available Houses";
     var currentType = ViewBag.CurrentType as string;
     var currentCity = ViewBag.CurrentCity as string;
+    var currentSearch = ViewBag.CurrentSearch as string;
     var cities = ViewBag.Cities as List<string> ?? new List<string>();
 }
 
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div class="d-flex justify-content-between align-items-center mb-3">
     <h2>Available Houses</h2>
     @if (User.IsInRole("Landlord"))
     {
@@ -14,14 +15,32 @@
     }
 </div>
 
+<!-- Search bar (mobile) -->
+<form asp-controller="House" asp-action="Index" method="get" class="d-lg-none mb-3">
+    <div class="input-group">
+        <input type="search" name="search" class="form-control rounded-pill"
+               placeholder="Search houses, condos, villas..."
+               value="@currentSearch" />
+        <button type="submit" class="btn btn-primary ms-2 rounded-pill">Search</button>
+    </div>
+</form>
+
+@if (!string.IsNullOrEmpty(currentSearch))
+{
+    <div class="alert alert-info py-2 mb-3">
+        Showing results for: <strong>"@currentSearch"</strong>
+        <a href="/House" class="ms-2 btn btn-sm btn-outline-secondary">Clear</a>
+    </div>
+}
+
 <!-- Type Filter -->
 <div class="mb-3">
     <p class="text-muted mb-1 fw-500">Filter by Type</p>
     <div class="btn-group flex-wrap" role="group">
-        <a href="/House?city=@currentCity" class="btn @(currentType == null ? "btn-dark" : "btn-outline-dark")">All</a>
+        <a href="/House?city=@currentCity&search=@currentSearch" class="btn @(currentType == null ? "btn-dark" : "btn-outline-dark")">All</a>
         @foreach (var type in new[] { "House", "Villa", "Condo", "Apartment", "Studio" })
         {
-            <a href="/House?type=@type&city=@currentCity" class="btn @(currentType == type ? "btn-dark" : "btn-outline-dark")">@type</a>
+            <a href="/House?type=@type&city=@currentCity&search=@currentSearch" class="btn @(currentType == type ? "btn-dark" : "btn-outline-dark")">@type</a>
         }
     </div>
 </div>
@@ -30,14 +49,14 @@
 @if (cities.Any())
 {
     <div class="mb-4">
-        <p class="text-muted mb-1 fw-500">Filter by Location</p>
+        <p class="text-muted mb-1">Filter by Location</p>
         <div class="d-flex flex-wrap gap-2">
-            <a href="/House?type=@currentType" class="btn btn-sm @(currentCity == null ? "btn-primary" : "btn-outline-primary") rounded-pill">
+            <a href="/House?type=@currentType&search=@currentSearch" class="btn btn-sm @(currentCity == null ? "btn-primary" : "btn-outline-primary") rounded-pill">
                 📍 All Locations
             </a>
             @foreach (var city in cities)
             {
-                <a href="/House?type=@currentType&city=@city" class="btn btn-sm @(currentCity == city ? "btn-primary" : "btn-outline-primary") rounded-pill">
+                <a href="/House?type=@currentType&city=@city&search=@currentSearch" class="btn btn-sm @(currentCity == city ? "btn-primary" : "btn-outline-primary") rounded-pill">
                     📍 @city
                 </a>
             }
@@ -47,7 +66,7 @@
 
 <!-- Results count -->
 <p class="text-muted mb-3">
-    Showing @Model.Count() house@(Model.Count() != 1 ? "s" : "")
+    Showing <strong>@Model.Count()</strong> house@(Model.Count() != 1 ? "s" : "")
     @if (currentCity != null) { <span>in <strong>@currentCity</strong></span> }
     @if (currentType != null) { <span>— Type: <strong>@currentType</strong></span> }
 </p>
@@ -95,7 +114,7 @@
 @if (!Model.Any())
 {
     <div class="text-center mt-5">
-        <p class="text-muted">No houses found.</p>
+        <p class="text-muted">No houses found for "<strong>@currentSearch</strong>".</p>
         <a href="/House" class="btn btn-outline-dark">Clear Filters</a>
     </div>
 }

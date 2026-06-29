@@ -218,4 +218,4 @@
 /Users/chhunmenghour/Desktop/house-renting/bin/Debug/net10.0/Swashbuckle.AspNetCore.SwaggerGen.dll
 /Users/chhunmenghour/Desktop/house-renting/bin/Debug/net10.0/Swashbuckle.AspNetCore.SwaggerUI.dll
 /Users/chhunmenghour/Desktop/house-renting/obj/Debug/net10.0/house-renting.MvcApplicationPartsAssemblyInfo.cs
-/Users/chhunmenghour/Desktop/house-renting/obj/Debug/net10.0/compressed/aq2hnynrdb-{0}-gpf2opm2s7-gpf2opm2s7.gz
+/Users/chhunmenghour/Desktop/house-renting/obj/Debug/net10.0/compressed/aq2hnynrdb-{0}-akhj4nukk6-akhj4nukk6.gz

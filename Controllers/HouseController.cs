@@ -21,7 +21,7 @@ public class HouseController : Controller
     }
 
     // GET: /House
-   public async Task<IActionResult> Index(string? type, string? city)
+   public async Task<IActionResult> Index(string? type, string? city, string? search)
     {
         var query = _context.Houses
             .Where(h => h.Status == "Available")
@@ -34,6 +34,14 @@ public class HouseController : Controller
         if (!string.IsNullOrEmpty(city))
             query = query.Where(h => h.City == city);
 
+        if (!string.IsNullOrEmpty(search))
+            query = query.Where(h =>
+                h.Title.Contains(search) ||
+                h.City.Contains(search) ||
+                h.Address.Contains(search) ||
+                h.HouseType.Contains(search) ||
+                h.Description.Contains(search));
+
         var cities = await _context.Houses
             .Where(h => h.Status == "Available")
             .Select(h => h.City)
@@ -42,6 +50,7 @@ public class HouseController : Controller
 
         ViewBag.CurrentType = type;
         ViewBag.CurrentCity = city;
+        ViewBag.CurrentSearch = search;
         ViewBag.Cities = cities;
 
         return View(await query.ToListAsync());

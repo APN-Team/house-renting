@@ -5,7 +5,7 @@ using house_renting.Data;
 namespace house_renting.Controllers.Api;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/houses")]
 public class HousesApiController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
@@ -15,23 +15,38 @@ public class HousesApiController : ControllerBase
         _context = context;
     }
 
-    // GET: api/houses
+    // GET: api/houses?search=condo
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetAll(string? search)
     {
-        var houses = await _context.Houses
+        var query = _context.Houses
             .Where(h => h.Status == "Available")
+            .AsQueryable();
+
+        if (!string.IsNullOrEmpty(search))
+            query = query.Where(h =>
+                h.Title.Contains(search) ||
+                h.City.Contains(search) ||
+                h.Address.Contains(search) ||
+                h.HouseType.Contains(search) ||
+                h.Description.Contains(search));
+
+        var houses = await query
             .Select(h => new {
                 h.HouseId,
                 h.Title,
                 h.Address,
                 h.City,
                 h.Price,
+                h.HouseType,
+                h.ImageUrl,
                 h.Bedrooms,
                 h.Bathrooms,
                 h.Status
             })
+            .Take(6)
             .ToListAsync();
+
         return Ok(houses);
     }
 
@@ -48,6 +63,8 @@ public class HousesApiController : ControllerBase
                 h.Address,
                 h.City,
                 h.Price,
+                h.HouseType,
+                h.ImageUrl,
                 h.Bedrooms,
                 h.Bathrooms,
                 h.Status

@@ -459,3 +459,8 @@ h3 {
         width: 100% !important;
     }
 }
+
+/* ── Search Dropdown ── */
+.search-item:hover {
+    background-color: #f0f5fb;
+}
