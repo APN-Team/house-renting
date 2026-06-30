@@ -123,21 +123,30 @@ public class HouseController : Controller
 
         return RedirectToAction(nameof(Index));
     }
-
-    // GET: /House/Edit/5
-    [Authorize(Roles = "Landlord")]
-    public async Task<IActionResult> Edit(int id)
-    {
-        var house = await _context.Houses.FindAsync(id);
-        if (house == null) return NotFound();
-        return View(house);
-    }
+// GET: /House/Edit/5
+[Authorize(Roles = "Landlord")]
+public async Task<IActionResult> Edit(int id)
+{
+    var user = await _userManager.GetUserAsync(User);
+    var house = await _context.Houses.FindAsync(id);
+    
+    if (house == null) return NotFound();
+    if (house.LandlordId != user!.Id) return Forbid();
+    
+    return View(house);
+}
 
     // POST: /House/Edit/5
     [Authorize(Roles = "Landlord")]
     [HttpPost]
     public async Task<IActionResult> Edit(House house, IFormFile? imageFile)
     {
+        var user = await _userManager.GetUserAsync(User);
+        var existing = await _context.Houses.FindAsync(house.HouseId);
+
+        if (existing == null) return NotFound();
+        if (existing.LandlordId != user!.Id) return Forbid();
+
         if (imageFile != null && imageFile.Length > 0)
         {
             var uploadsFolder = Path.Combine(_env.WebRootPath, "uploads");
@@ -146,10 +155,19 @@ public class HouseController : Controller
             var filePath = Path.Combine(uploadsFolder, fileName);
             using var stream = new FileStream(filePath, FileMode.Create);
             await imageFile.CopyToAsync(stream);
-            house.ImageUrl = "/uploads/" + fileName;
+            existing.ImageUrl = "/uploads/" + fileName;
         }
 
-        _context.Houses.Update(house);
+        existing.Title = house.Title;
+        existing.Description = house.Description;
+        existing.Address = house.Address;
+        existing.City = house.City;
+        existing.Price = house.Price;
+        existing.Bedrooms = house.Bedrooms;
+        existing.Bathrooms = house.Bathrooms;
+        existing.Status = house.Status;
+        existing.HouseType = house.HouseType;
+
         await _context.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
     }
@@ -159,12 +177,14 @@ public class HouseController : Controller
     [HttpPost]
     public async Task<IActionResult> Delete(int id)
     {
+        var user = await _userManager.GetUserAsync(User);
         var house = await _context.Houses.FindAsync(id);
-        if (house != null)
-        {
-            _context.Houses.Remove(house);
-            await _context.SaveChangesAsync();
-        }
+
+        if (house == null) return NotFound();
+        if (house.LandlordId != user!.Id) return Forbid();
+
+        _context.Houses.Remove(house);
+        await _context.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
     }
 }

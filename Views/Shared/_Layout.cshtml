@@ -1,4 +1,16 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity
+@using house_renting.Models
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    ApplicationUser? currentUser = null;
+    if (User.Identity!.IsAuthenticated)
+    {
+        currentUser = await UserManager.GetUserAsync(User);
+    }
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -19,7 +31,7 @@
 
                     <!-- Logo -->
                     <a class="navbar-brand fw-bold text-white fs-5" asp-controller="Home" asp-action="Index">
-                        🏠 House Renting
+                        <img src="https://cdn-icons-png.flaticon.com/128/25/25694.png" loading="lazy" alt="Home " title="Home " width="35" height="35"> House Renting
                     </a>
 
                    <!-- Search bar - desktop -->
@@ -38,10 +50,20 @@
                     <div class="d-none d-lg-flex align-items-center gap-2">
                         @if (User.Identity!.IsAuthenticated)
                         {
-                            <a class="btn btn-outline-light btn-sm rounded-pill"
-                               asp-controller="Account" asp-action="Profile">
-                                👤 @User.Identity.Name
-                            </a>
+                            var profileImage = (User.Identity as System.Security.Claims.ClaimsIdentity)?.FindFirst("ProfileImage")?.Value;
+
+                   <a class="btn btn-outline-light btn-sm rounded-pill d-flex align-items-center gap-2"
+                    asp-controller="Account" asp-action="Profile">
+                        @if (currentUser != null && !string.IsNullOrEmpty(currentUser.ProfileImage))
+                        {
+                            <img src="@currentUser.ProfileImage" style="width:24px; height:24px; border-radius:50%; object-fit:cover;" />
+                        }
+                        else
+                        {
+                            <i class="bi bi-person-circle"></i>
+                        }
+                        <span>@User.Identity!.Name?.Split('@')[0]</span>
+                    </a>
                             <form asp-controller="Account" asp-action="Logout" method="post">
                                 <button class="btn btn-outline-light btn-sm rounded-pill">Logout</button>
                             </form>
@@ -226,5 +248,42 @@
             });
         }
 </script>
+<!-- Mobile Bottom Navigation -->
+<nav class="mobile-bottom-nav d-lg-none">
+
+    <a asp-controller="Home" asp-action="Index"
+       class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" ? "active" : "")">
+        <i class="bi bi-house-door"></i>
+        <span>Home</span>
+    </a>
+
+    <a asp-controller="House" asp-action="Index"
+       class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "House" ? "active" : "")">
+        <i class="bi bi-buildings"></i>
+        <span>Houses</span>
+    </a>
+
+    <a asp-controller="Home" asp-action="Contact"
+       class="@(ViewContext.RouteData.Values["action"]?.ToString() == "Contact" ? "active" : "")">
+        <i class="bi bi-envelope"></i>
+        <span>Contact</span>
+    </a>
+
+    @if (User.Identity!.IsAuthenticated)
+    {
+        <a asp-controller="Account" asp-action="Profile">
+            <i class="bi bi-person-circle"></i>
+            <span>Profile</span>
+        </a>
+    }
+    else
+    {
+        <a asp-controller="Account" asp-action="Login">
+            <i class="bi bi-box-arrow-in-right"></i>
+            <span>Login</span>
+        </a>
+    }
+
+</nav>
 </body>
 </html>

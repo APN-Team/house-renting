@@ -1,0 +1,45 @@
+@model house_renting.Models.ApplicationUser
+@{
+    ViewData["Title"] = "Edit Profile";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-body p-4">
+                <h3 class="mb-4 text-center">Edit Profile</h3>
+
+                <div class="text-center mb-4">
+                    @if (!string.IsNullOrEmpty(Model.ProfileImage))
+                    {
+                        <img src="@Model.ProfileImage"
+                             style="width:90px; height:90px; border-radius:50%; object-fit:cover; border:3px solid #3a6ea8;" />
+                    }
+                    else
+                    {
+                        <div style="width:90px; height:90px; border-radius:50%; background-color:#3a6ea8; color:white; font-size:2.5rem; display:flex; align-items:center; justify-content:center; margin:0 auto;">
+                            @Model.FullName.Substring(0, 1).ToUpper()
+                        </div>
+                    }
+                </div>
+
+                <form method="post" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" name="fullName" class="form-control" value="@Model.FullName" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Profile Picture</label>
+                        <input type="file" name="profileImage" class="form-control" accept="image/*" />
+                        <small class="text-muted">Leave empty to keep current picture</small>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-success w-100">Save Changes</button>
+                        <a href="/Account/Profile" class="btn btn-secondary w-100">Cancel</a>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>

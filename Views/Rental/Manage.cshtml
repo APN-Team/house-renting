@@ -32,9 +32,9 @@
                 }
             </div>
             <hr />
-            <p class="mb-1">👤 Tenant: <strong>@request.Tenant?.FullName</strong> (@request.Tenant?.Email)</p>
-            <p class="mb-1">📅 From: <strong>@request.StartDate.ToShortDateString()</strong> To: <strong>@request.EndDate.ToShortDateString()</strong></p>
-            <p class="mb-1">💬 Message: @request.Message</p>
+            <p class="mb-1"><img src="https://cdn-icons-png.flaticon.com/128/16876/16876871.png" loading="lazy" alt="User profile " title="User profile " width="20" height="20"> Tenant: <strong>@request.Tenant?.FullName</strong> (@request.Tenant?.Email)</p>
+            <p class="mb-1"><img src="https://cdn-icons-png.flaticon.com/128/61/61469.png" loading="lazy" alt="Calendar " title="Calendar " width="20" height="20"> From: <strong>@request.StartDate.ToShortDateString()</strong> To: <strong>@request.EndDate.ToShortDateString()</strong></p>
+            <p class="mb-1"><img src="https://cdn-icons-png.flaticon.com/128/15586/15586318.png" loading="lazy" alt="Bubble chat " title="Bubble chat " width="20" height="20"> Message: @request.Message</p>
 
             @if (request.Status == "Pending")
             {

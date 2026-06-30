@@ -1,3 +1,4 @@
+@using System.Security.Claims
 @model IEnumerable<house_renting.Models.House>
 @{
     ViewData["Title"] = "Available Houses";
@@ -6,7 +7,6 @@
     var currentSearch = ViewBag.CurrentSearch as string;
     var cities = ViewBag.Cities as List<string> ?? new List<string>();
 }
-
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h2>Available Houses</h2>
     @if (User.IsInRole("Landlord"))
@@ -52,12 +52,12 @@
         <p class="text-muted mb-1">Filter by Location</p>
         <div class="d-flex flex-wrap gap-2">
             <a href="/House?type=@currentType&search=@currentSearch" class="btn btn-sm @(currentCity == null ? "btn-primary" : "btn-outline-primary") rounded-pill">
-                📍 All Locations
+                <img src="https://cdn-icons-png.flaticon.com/128/3416/3416100.png" loading="lazy" alt="Pin " title="Pin " width="20" height="20"> All Locations
             </a>
             @foreach (var city in cities)
             {
                 <a href="/House?type=@currentType&city=@city&search=@currentSearch" class="btn btn-sm @(currentCity == city ? "btn-primary" : "btn-outline-primary") rounded-pill">
-                    📍 @city
+                    <img src="https://cdn-icons-png.flaticon.com/128/3416/3416100.png" loading="lazy" alt="Pin " title="Pin " width="20" height="20"> @city
                 </a>
             }
         </div>
@@ -78,7 +78,7 @@
             <div class="card h-100 shadow-sm">
                 @if (!string.IsNullOrEmpty(house.ImageUrl))
                 {
-                    <img src="@house.ImageUrl" class="card-img-top" style="height:200px; object-fit:cover;" alt="@house.Title" />
+                    <img src="@house.ImageUrl" class="card-img-top" style="height:200px; object-fit:cover; background:#f0f5fb;" alt="@house.Title" />
                 }
                 else
                 {
@@ -91,20 +91,20 @@
                     <h5 class="card-title">@house.Title</h5>
                     <p class="text-muted" style="cursor:pointer;"
                        onclick="window.location.href='/House?city=@house.City'">
-                        📍 @house.Address, <span class="text-primary">@house.City</span>
+                        <img src="https://cdn-icons-png.flaticon.com/128/3416/3416100.png" loading="lazy" alt="Pin " title="Pin " width="20" height="20"> @house.Address, <span class="text-primary">@house.City</span>
                     </p>
                     <p class="fw-bold text-success">$@house.Price / month</p>
-                    <p class="text-muted">🛏 @house.Bedrooms Bedrooms | 🚿 @house.Bathrooms Bathrooms</p>
+                    <p class="text-muted"><img src="https://cdn-icons-png.flaticon.com/128/494/494970.png" loading="lazy" alt="Bed " title="Bed " width="20" height="20"> @house.Bedrooms Bedrooms | <img src="https://cdn-icons-png.flaticon.com/128/10753/10753257.png" loading="lazy" alt="Shower " title="Shower " width="20" height="20"> @house.Bathrooms Bathrooms</p>
                 </div>
                 <div class="card-footer d-flex gap-2">
                     <a href="/House/Details/@house.HouseId" class="btn btn-primary flex-grow-1">View Details</a>
-                    @if (User.IsInRole("Landlord"))
-                    {
-                        <a href="/House/Edit/@house.HouseId" class="btn btn-warning">Edit</a>
-                        <form method="post" action="/House/Delete/@house.HouseId" class="d-inline">
-                            <button type="submit" class="btn btn-danger" onclick="return confirm('Delete this house?')">Delete</button>
-                        </form>
-                    }
+                    @if (User.IsInRole("Landlord") && house.LandlordId == User.FindFirstValue(ClaimTypes.NameIdentifier))
+                        {
+                            <a href="/House/Edit/@house.HouseId" class="btn btn-warning">Edit</a>
+                            <form method="post" action="/House/Delete/@house.HouseId" class="d-inline">
+                                <button type="submit" class="btn btn-danger" onclick="return confirm('Delete this house?')">Delete</button>
+                            </form>
+                        }
                 </div>
             </div>
         </div>
