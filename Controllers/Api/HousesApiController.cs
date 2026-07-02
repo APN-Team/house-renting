@@ -19,12 +19,29 @@ public class HousesApiController : ControllerBase
         _context = context;
     }
 
-    // GET: api/houses
-    // Example:
-    // /api/houses?search=villa
-    // /api/houses?city=Phnom Penh
-    // /api/houses?minPrice=300&maxPrice=800
-    // /api/houses?page=1&pageSize=6
+    /// <summary>
+    /// Get all available houses.
+    /// </summary>
+    /// <remarks>
+    /// Supports:
+    /// - Search
+    /// - City filter
+    /// - Price filter
+    /// - Bedrooms filter
+    /// - Bathrooms filter
+    /// - House type filter
+    /// - Pagination
+    /// </remarks>
+    /// <param name="search">Search by title, city, address or description.</param>
+    /// <param name="city">Filter by city.</param>
+    /// <param name="minPrice">Minimum rental price.</param>
+    /// <param name="maxPrice">Maximum rental price.</param>
+    /// <param name="bedrooms">Minimum bedrooms.</param>
+    /// <param name="bathrooms">Minimum bathrooms.</param>
+    /// <param name="houseType">House type.</param>
+    /// <param name="page">Current page.</param>
+    /// <param name="pageSize">Items per page.</param>
+    /// <returns>List of available houses.</returns>
     [HttpGet]
     public async Task<IActionResult> GetAll(
         string? search,
@@ -113,6 +130,11 @@ public class HousesApiController : ControllerBase
     }
 
     // GET: api/houses/5
+    /// <summary>
+    /// Get a single house.
+    /// </summary>
+    /// <param name="id">House ID.</param>
+    /// <returns>House details.</returns>
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(int id)
     {

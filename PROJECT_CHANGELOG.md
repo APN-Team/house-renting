@@ -35,3 +35,58 @@ Added filtering
 
 Reason:
 Allow external clients such as Swagger and future Telegram Mini App to consume the backend.
+
+--------------------------------------------
+
+## Sprint 3
+
+### Rental API
+
+Added
+
+- RentalDto
+- Rental API
+- Rental pagination
+- Rental status filter
+- Standard API responses
+
+Reason:
+
+Prepare backend services for Tenant Dashboard.
+
+--------------------------------------------
+
+## Sprint 4
+
+### Dashboard API
+
+Added
+
+- DashboardDto
+- Dashboard API
+- Statistics endpoint
+
+Dashboard returns
+
+- Total Houses
+- Available Houses
+- Pending Rentals
+- Approved Rentals
+
+Reason:
+
+Provide dashboard statistics for administrators.
+
+---------------------------------------------
+
+## Sprint 5
+
+### Project Improvements
+
+Added
+
+- README
+- API Documentation
+- Swagger testing
+- Better project structure
+- DTO architecture

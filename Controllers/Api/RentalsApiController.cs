@@ -19,6 +19,21 @@ public class RentalsApiController : ControllerBase
     }
 
     // GET: api/rentals
+    /// <summary>
+    /// Get rental requests.
+    /// </summary>
+    /// <param name="status">
+    /// Optional status filter.
+    /// </param>
+    /// <param name="page">
+    /// Current page.
+    /// </param>
+    /// <param name="pageSize">
+    /// Items per page.
+    /// </param>
+    /// <returns>
+    /// Rental request list.
+    /// </returns>
     [HttpGet]
     public async Task<IActionResult> GetAll(
         string? status,
