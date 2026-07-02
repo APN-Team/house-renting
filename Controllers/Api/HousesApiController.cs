@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+
 using house_renting.Data;
+using house_renting.Models;
 using house_renting.DTOs.Common;
 using house_renting.DTOs.House;
 
