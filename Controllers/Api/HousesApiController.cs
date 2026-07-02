@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using house_renting.Data;
+using house_renting.DTOs.Common;
+using house_renting.DTOs.House;
 
 namespace house_renting.Controllers.Api;
 
@@ -15,39 +17,97 @@ public class HousesApiController : ControllerBase
         _context = context;
     }
 
-    // GET: api/houses?search=condo
+    // GET: api/houses
+    // Example:
+    // /api/houses?search=villa
+    // /api/houses?city=Phnom Penh
+    // /api/houses?minPrice=300&maxPrice=800
+    // /api/houses?page=1&pageSize=6
     [HttpGet]
-    public async Task<IActionResult> GetAll(string? search)
+    public async Task<IActionResult> GetAll(
+        string? search,
+        string? city,
+        decimal? minPrice,
+        decimal? maxPrice,
+        int? bedrooms,
+        int? bathrooms,
+        string? houseType,
+        int page = 1,
+        int pageSize = 10)
     {
         var query = _context.Houses
+            .Include(h => h.Landlord)
             .Where(h => h.Status == "Available")
             .AsQueryable();
 
-        if (!string.IsNullOrEmpty(search))
+        // Search
+        if (!string.IsNullOrWhiteSpace(search))
+        {
             query = query.Where(h =>
                 h.Title.Contains(search) ||
                 h.City.Contains(search) ||
                 h.Address.Contains(search) ||
-                h.HouseType.Contains(search) ||
-                h.Description.Contains(search));
+                h.Description.Contains(search) ||
+                h.HouseType.Contains(search));
+        }
+
+        // Filters
+        if (!string.IsNullOrWhiteSpace(city))
+            query = query.Where(h => h.City == city);
+
+        if (minPrice.HasValue)
+            query = query.Where(h => h.Price >= minPrice.Value);
+
+        if (maxPrice.HasValue)
+            query = query.Where(h => h.Price <= maxPrice.Value);
+
+        if (bedrooms.HasValue)
+            query = query.Where(h => h.Bedrooms == bedrooms.Value);
+
+        if (bathrooms.HasValue)
+            query = query.Where(h => h.Bathrooms == bathrooms.Value);
+
+        if (!string.IsNullOrWhiteSpace(houseType))
+            query = query.Where(h => h.HouseType == houseType);
+
+        var totalRecords = await query.CountAsync();
 
         var houses = await query
-            .Select(h => new {
-                h.HouseId,
-                h.Title,
-                h.Address,
-                h.City,
-                h.Price,
-                h.HouseType,
-                h.ImageUrl,
-                h.Bedrooms,
-                h.Bathrooms,
-                h.Status
+            .OrderByDescending(h => h.CreatedAt)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .Select(h => new HouseDto
+            {
+                HouseId = h.HouseId,
+                Title = h.Title,
+                Description = h.Description,
+                Address = h.Address,
+                City = h.City,
+                Price = h.Price,
+                Bedrooms = h.Bedrooms,
+                Bathrooms = h.Bathrooms,
+                Status = h.Status,
+                HouseType = h.HouseType,
+                ImageUrl = h.ImageUrl,
+                CreatedAt = h.CreatedAt,
+                LandlordName = h.Landlord != null
+                    ? h.Landlord.FullName
+                    : null
             })
-            .Take(6)
             .ToListAsync();
 
-        return Ok(houses);
+        return Ok(new ApiResponse<object>
+        {
+            Success = true,
+            Message = "Houses retrieved successfully.",
+            Data = new
+            {
+                TotalRecords = totalRecords,
+                CurrentPage = page,
+                PageSize = pageSize,
+                Houses = houses
+            }
+        });
     }
 
     // GET: api/houses/5
@@ -55,23 +115,42 @@ public class HousesApiController : ControllerBase
     public async Task<IActionResult> GetById(int id)
     {
         var house = await _context.Houses
+            .Include(h => h.Landlord)
             .Where(h => h.HouseId == id)
-            .Select(h => new {
-                h.HouseId,
-                h.Title,
-                h.Description,
-                h.Address,
-                h.City,
-                h.Price,
-                h.HouseType,
-                h.ImageUrl,
-                h.Bedrooms,
-                h.Bathrooms,
-                h.Status
+            .Select(h => new HouseDto
+            {
+                HouseId = h.HouseId,
+                Title = h.Title,
+                Description = h.Description,
+                Address = h.Address,
+                City = h.City,
+                Price = h.Price,
+                Bedrooms = h.Bedrooms,
+                Bathrooms = h.Bathrooms,
+                Status = h.Status,
+                HouseType = h.HouseType,
+                ImageUrl = h.ImageUrl,
+                CreatedAt = h.CreatedAt,
+                LandlordName = h.Landlord != null
+                    ? h.Landlord.FullName
+                    : null
             })
             .FirstOrDefaultAsync();
 
-        if (house == null) return NotFound();
-        return Ok(house);
+        if (house == null)
+        {
+            return NotFound(new ApiResponse<object>
+            {
+                Success = false,
+                Message = "House not found."
+            });
+        }
+
+        return Ok(new ApiResponse<HouseDto>
+        {
+            Success = true,
+            Message = "House retrieved successfully.",
+            Data = house
+        });
     }
 }
