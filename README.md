@@ -10,20 +10,20 @@ This project allows tenants to search rental properties, landlords to manage lis
 
 | Name | Role |
 |------|------|
-| Your Name | Backend & API Development |
-| Friend Name | Frontend & MVC Features |
+| Rol Akphinoun | Frontend & API Development |
+| Chhun Menghour | Backend & MVC Features |
 
 ---
 
 # Technology Stack
 
-- ASP.NET Core MVC (.NET 10)
-- Entity Framework Core
-- SQLite Database
-- ASP.NET Identity
-- Swagger (OpenAPI)
-- Bootstrap 5
-- HTML / CSS / JavaScript
+- User Authentication
+- House Listings
+- Rental Requests
+- Reviews
+- Admin Dashboard
+- REST API
+- Swagger Documentation
 
 ---
 
@@ -74,9 +74,16 @@ GET    /api/dashboard
 
 Swagger UI
 
-```
+``` 
 https://localhost:5155/swagger
 ```
+Default Admin
+
+Email:
+admin@gmail.com
+
+Password:
+Admin@123
 
 ---
 
@@ -103,18 +110,12 @@ houserenting.db
 
 ---
 
-# Future Improvements
+## Running
 
-- Payment Gateway
-- Telegram Mini App
-- House Images Upload
-- Google Maps
-- Email Notifications
-- Favorites System
+dotnet restore
 
----
+dotnet run
 
-# License
+Open:
 
-University Project
-Computer Science Department
+https://localhost:5155
