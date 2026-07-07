@@ -3,52 +3,39 @@
 }
 
 <!-- ================= HERO ================= -->
-
 <section class="hero">
 
     <div class="hero-overlay"></div>
 
     <div class="hero-content container">
 
-        <h1>
-            Find Your Perfect Home
-        </h1>
+        <h1>Find Your Perfect Home</h1>
 
-        <p>
-            Browse thousands of apartments & houses for rent across Cambodia
-        </p>
+        <p>Browse thousands of apartments &amp; houses for rent across Cambodia</p>
 
+        <!-- House type pills: clicking one loads 5 random houses of that type below -->
         <div class="house-types">
-
             <button class="type-btn active" data-type="">
-                <i class="bi bi-house-fill"></i>
-                House
+                <i class="bi bi-grid-fill"></i> All
             </button>
-
+            <button class="type-btn" data-type="House">
+                <i class="bi bi-house-fill"></i> House
+            </button>
             <button class="type-btn" data-type="Villa">
-                <i class="bi bi-house-door"></i>
-                Villa
+                <i class="bi bi-house-door"></i> Villa
             </button>
-
             <button class="type-btn" data-type="Condo">
-                <i class="bi bi-building"></i>
-                Condo
+                <i class="bi bi-building"></i> Condo
             </button>
-
             <button class="type-btn" data-type="Apartment">
-                <i class="bi bi-buildings"></i>
-                Apartment
+                <i class="bi bi-buildings"></i> Apartment
             </button>
-
             <button class="type-btn" data-type="Studio">
-                <i class="bi bi-door-open"></i>
-                Studio
+                <i class="bi bi-door-open"></i> Studio
             </button>
-
         </div>
 
         <!-- Search -->
-
         <div class="search-box position-relative mx-auto">
 
             <div class="search-bar-group">
@@ -62,12 +49,11 @@
                     <option value="Studio">Studio</option>
                 </select>
 
-                <input
-                    type="text"
-                    id="heroSearchInput"
-                    class="hero-search"
-                    placeholder="Search by city, house type, or keyword..."
-                    autocomplete="off">
+                <input type="text"
+                       id="heroSearchInput"
+                       class="hero-search"
+                       placeholder="Search by city, house type, or keyword..."
+                       autocomplete="off">
 
                 <select id="heroPaymentSelect" class="payment-select">
                     <option value="Monthly">Monthly</option>
@@ -80,10 +66,7 @@
 
             </div>
 
-            <div id="heroSearchDropdown"
-                 class="bg-white rounded shadow d-none">
-
-            </div>
+            <div id="heroSearchDropdown" class="bg-white rounded shadow d-none"></div>
 
         </div>
 
@@ -91,114 +74,234 @@
 
 </section>
 
+<!-- ================= FEATURED HOUSES (from database) ================= -->
+<section class="featured-section">
+    <div class="container-xl">
+
+        <div class="d-flex justify-content-between align-items-end mb-4">
+            <div>
+                <h2 class="section-title mb-1" id="featuredTitle">Featured Houses</h2>
+                <p class="section-subtitle mb-0">Handpicked listings from our platform</p>
+            </div>
+            <a href="/House" class="view-all-link" id="featuredViewAll">
+                View All <i class="bi bi-arrow-right"></i>
+            </a>
+        </div>
+
+        <div class="row g-4" id="featuredGrid">
+            <!-- Cards are rendered by JS from /api/houses/featured -->
+            <div class="col-12 text-center py-5" id="featuredLoading">
+                <div class="spinner-border text-primary" role="status"></div>
+                <p class="text-muted mt-3 mb-0">Loading featured houses...</p>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- ================= CTA BAND ================= -->
+<section class="cta-band">
+    <div class="container-xl d-flex flex-wrap align-items-center justify-content-between gap-3">
+        <div class="d-flex align-items-center gap-3">
+            <span class="cta-icon"><i class="bi bi-house-heart"></i></span>
+            <div>
+                <h4 class="mb-1">Ready to Find Your New Home?</h4>
+                <p class="mb-0 text-muted">Browse hundreds of verified listings across Cambodia.</p>
+            </div>
+        </div>
+        <a href="/House" class="btn btn-cta-primary">Browse Houses</a>
+    </div>
+</section>
+
 <script>
-const heroInput = document.getElementById('heroSearchInput');
-const heroDropdown = document.getElementById('heroSearchDropdown');
+// =====================================================
+// Featured houses — random picks from the database.
+// Clicking a type pill (e.g. Villa) loads 5 random
+// houses of that type from /api/houses/featured.
+// =====================================================
+(function () {
 
-let heroDebounce;
+    const grid = document.getElementById('featuredGrid');
+    const title = document.getElementById('featuredTitle');
+    const viewAll = document.getElementById('featuredViewAll');
+    const typeButtons = document.querySelectorAll('.type-btn');
 
-heroInput.addEventListener('input', function () {
-
-    clearTimeout(heroDebounce);
-
-    const query = this.value.trim();
-
-    if (query.length < 2){
-
-        heroDropdown.classList.add('d-none');
-        heroDropdown.innerHTML = '';
-
-        return;
+    // Show the price according to the logged-in tenant's payment plan.
+    // Yearly plan  -> discounted yearly price (landlord chooses the discount %)
+    // Monthly plan -> normal monthly price, no discount
+    function priceHtml(h) {
+        const plan = (window.appUser && window.appUser.paymentPlan) || 'Monthly';
+        if (plan === 'Yearly' && h.allowYearlyRental) {
+            return `$${Number(h.yearlyPrice).toLocaleString()} / year
+                    <span class="discount-chip">-${h.yearlyDiscountPercent}%</span>`;
+        }
+        return `$${Number(h.price).toLocaleString()} / month`;
     }
 
-    heroDebounce = setTimeout(async ()=>{
+    function cardHtml(h) {
+        const img = h.imageUrl || '/images/no-image.png';
+        return `
+        <div class="col-12 col-sm-6 col-lg-3">
+            <a href="/House/Details/${h.houseId}" class="feature-card d-block">
+                <div class="feature-card-img">
+                    <img src="${img}" alt="${h.title}" loading="lazy"
+                         onerror="this.src='/images/no-image.png'">
+                    <span class="price-badge">${priceHtml(h)}</span>
+                    <span class="type-chip">${h.houseType}</span>
+                </div>
+                <div class="feature-card-body">
+                    <h5 class="feature-card-title">${h.title}</h5>
+                    <p class="feature-card-location">
+                        <i class="bi bi-geo-alt-fill"></i> ${h.city}
+                    </p>
+                    <div class="feature-card-meta">
+                        <span><i class="bi bi-door-closed"></i> ${h.bedrooms} Beds</span>
+                        <span><i class="bi bi-droplet"></i> ${h.bathrooms} Baths</span>
+                        <span><i class="bi bi-arrows-fullscreen"></i> ${h.area} m²</span>
+                    </div>
+                </div>
+            </a>
+        </div>`;
+    }
 
-        try{
+    async function loadFeatured(type) {
+        grid.innerHTML = `
+            <div class="col-12 text-center py-5">
+                <div class="spinner-border text-primary" role="status"></div>
+            </div>`;
 
-            const res =
-                await fetch(`/api/houses?search=${encodeURIComponent(query)}&pageSize=6`);
+        try {
+            const url = type
+                ? `/api/houses/featured?houseType=${encodeURIComponent(type)}&count=5`
+                : `/api/houses/featured?count=8`;
 
+            const res = await fetch(url);
             const json = await res.json();
-
             const houses = json.data.houses;
 
-            if(houses.length===0){
+            title.textContent = type ? `Featured ${type}s` : 'Featured Houses';
+            viewAll.href = type ? `/House?type=${encodeURIComponent(type)}` : '/House';
 
-                heroDropdown.innerHTML =
-                    '<div class="p-3 text-muted">No results found</div>';
-
-            }else{
-
-                heroDropdown.innerHTML = `
-
-                    <div class="p-2 border-bottom fw-bold text-secondary">
-                        HOUSES
-                    </div>
-
-                    ${houses.map(h=>`
-
-                        
-                            href="/House/Details/${h.houseId}"
-                            class="search-item d-flex gap-3 text-decoration-none border-bottom">
-
-                            <img
-                                src="${h.imageUrl || '/images/no-image.png'}">
-
-                            <div>
-
-                                <div class="fw-bold text-dark">
-                                    ${h.title}
-                                </div>
-
-                                <div class="small text-muted">
-                                    ${h.address}, ${h.city}
-                                </div>
-
-                                <div class="small text-primary">
-                                    $${h.price}/month
-                                </div>
-
-                            </div>
-
-                        </a>
-
-                    `).join('')}
-
-                    
-                        href="/House?search=${encodeURIComponent(query)}"
-                        class="d-block text-center p-3">
-
-                        View all results
-
-                    </a>
-
-                `;
+            if (!houses || houses.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-12 text-center py-5">
+                        <i class="bi bi-house-slash fs-1 text-muted"></i>
+                        <p class="text-muted mt-2 mb-0">No ${type || ''} listings available right now.</p>
+                    </div>`;
+                return;
             }
 
-            heroDropdown.classList.remove('d-none');
-
+            grid.innerHTML = houses.map(cardHtml).join('');
         }
-
-        catch{
-
-            heroDropdown.innerHTML =
-                '<div class="p-3 text-danger">Search failed</div>';
-
-            heroDropdown.classList.remove('d-none');
-
+        catch (err) {
+            console.error('Failed to load featured houses:', err);
+            grid.innerHTML = `
+                <div class="col-12 text-center py-5">
+                    <p class="text-danger mb-0">Could not load featured houses.</p>
+                </div>`;
         }
-
-    },250);
-
-});
-
-document.addEventListener('click',function(e){
-
-    if(!document.querySelector('.search-box').contains(e.target)){
-
-        heroDropdown.classList.add('d-none');
-
     }
 
-});
+    // Type pill clicks -> load 5 random houses of that type
+    typeButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            typeButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            loadFeatured(btn.dataset.type);
+        });
+    });
+
+    // Initial load
+    loadFeatured('');
+})();
+
+// =====================================================
+// Hero live search dropdown (uses /api/houses?search=)
+// =====================================================
+(function () {
+
+    const heroInput = document.getElementById('heroSearchInput');
+    const heroDropdown = document.getElementById('heroSearchDropdown');
+    const heroBtn = document.getElementById('heroSearchBtn');
+    const heroType = document.getElementById('heroTypeSelect');
+
+    let heroDebounce;
+
+    function itemPrice(h) {
+        const plan = (window.appUser && window.appUser.paymentPlan) || 'Monthly';
+        if (plan === 'Yearly' && h.allowYearlyRental) {
+            return `$${Number(h.yearlyPrice).toLocaleString()}/year (-${h.yearlyDiscountPercent}%)`;
+        }
+        return `$${Number(h.price).toLocaleString()}/month`;
+    }
+
+    heroInput.addEventListener('input', function () {
+
+        clearTimeout(heroDebounce);
+        const query = this.value.trim();
+
+        if (query.length < 2) {
+            heroDropdown.classList.add('d-none');
+            heroDropdown.innerHTML = '';
+            return;
+        }
+
+        heroDebounce = setTimeout(async () => {
+            try {
+                const res = await fetch(`/api/houses?search=${encodeURIComponent(query)}&pageSize=6`);
+                const json = await res.json();
+                const houses = json.data.houses;
+
+                if (houses.length === 0) {
+                    heroDropdown.innerHTML = '<div class="p-3 text-muted">No results found</div>';
+                }
+                else {
+                    heroDropdown.innerHTML = `
+                        <div class="p-2 border-bottom fw-bold text-secondary small">HOUSES</div>
+                        ${houses.map(h => `
+                            <a href="/House/Details/${h.houseId}"
+                               class="search-item d-flex gap-3 text-decoration-none border-bottom">
+                                <img src="${h.imageUrl || '/images/no-image.png'}"
+                                     onerror="this.src='/images/no-image.png'">
+                                <div>
+                                    <div class="fw-bold text-dark">${h.title}</div>
+                                    <div class="small text-muted">${h.address}, ${h.city}</div>
+                                    <div class="small text-primary">${itemPrice(h)}</div>
+                                </div>
+                            </a>
+                        `).join('')}
+                        <a href="/House?search=${encodeURIComponent(query)}"
+                           class="d-block text-center p-3 fw-semibold">
+                            View all results
+                        </a>`;
+                }
+
+                heroDropdown.classList.remove('d-none');
+            }
+            catch {
+                heroDropdown.innerHTML = '<div class="p-3 text-danger">Search failed</div>';
+                heroDropdown.classList.remove('d-none');
+            }
+        }, 250);
+
+    });
+
+    // Search button -> go to listing page with filters applied
+    heroBtn.addEventListener('click', () => {
+        const params = new URLSearchParams();
+        if (heroInput.value.trim()) params.set('search', heroInput.value.trim());
+        if (heroType.value) params.set('type', heroType.value);
+        window.location.href = '/House?' + params.toString();
+    });
+
+    heroInput.addEventListener('keydown', e => {
+        if (e.key === 'Enter') heroBtn.click();
+    });
+
+    document.addEventListener('click', function (e) {
+        if (!document.querySelector('.search-box').contains(e.target)) {
+            heroDropdown.classList.add('d-none');
+        }
+    });
+})();
 </script>

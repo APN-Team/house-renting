@@ -8,6 +8,13 @@
     {
         currentUser = await UserManager.GetUserAsync(User);
     }
+
+    var paymentPlan = (currentUser != null && User.IsInRole("Tenant"))
+        ? currentUser.PreferredPaymentPlan
+        : "Monthly";
+
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
 }
 
 <!DOCTYPE html>
@@ -24,282 +31,242 @@
 
 <body style="display:flex; flex-direction:column; min-height:100vh;">
 
-    <nav class="navbar navbar-expand-lg sticky-top shadow-sm" style="
-        background:#082B6C;
-        padding-top:12px;
-        padding-bottom:12px;
-        ">
-        <div class="container-fluid px-5">
+    <!-- Used by home page & search scripts to show monthly vs yearly prices -->
+    <script>
+        window.appUser = {
+            isAuthenticated: @(User.Identity!.IsAuthenticated ? "true" : "false"),
+            paymentPlan: '@paymentPlan'
+        };
+    </script>
 
-            
-                <!-- Top Row -->
-                
+    <header class="site-header sticky-top">
+        <div class="container-xl">
 
-                    <!-- Logo -->
-                    <a class="navbar-brand fw-bold text-white fs-4 d-flex align-items-center gap-2"
-                       asp-controller="Home" asp-action="Index">
+            <!-- ── Top row: Logo (left) + Auth buttons (right) ── -->
+            <div class="header-top d-flex align-items-center justify-content-between">
 
-                        <i class="bi bi-house-door-fill fs-2"></i>
+                <a class="brand d-flex align-items-center gap-2" asp-controller="Home" asp-action="Index">
+                    <span class="brand-icon"><i class="bi bi-house-door-fill"></i></span>
+                    <span class="brand-text">House Renting</span>
+                </a>
 
-                        House Renting
-
-                    </a>
-
-                    <!-- Search bar - desktop -->
-                    @* <div class="d-none d-lg-flex w-50 position-relative" id="searchWrapper">
-                        <input class="form-control rounded-pill px-4" type="search" id="searchInput"
-                               placeholder="Search houses, condos, villas..." autocomplete="off" />
-                        <div id="searchDropdown" class="position-absolute bg-white shadow rounded w-100 d-none"
-                             style="top:42px; z-index:9999; max-height:400px; overflow-y:auto;">
-                        </div>
-                    </div> *@
-
-                    <!-- Right buttons - hidden on mobile -->
-                    <div class="d-none d-lg-flex align-items-center gap-2">
-                        @if (User.Identity!.IsAuthenticated)
+                <div class="d-none d-lg-flex align-items-center gap-2">
+                    @if (User.Identity!.IsAuthenticated)
+                    {
+                        @if (User.IsInRole("Tenant"))
                         {
-                            var profileImage = (User.Identity as
-                        System.Security.Claims.ClaimsIdentity)?.FindFirst("ProfileImage")?.Value;
-
-                            <a class="btn btn-outline-light btn-sm rounded-pill d-flex align-items-center gap-2"
-                               asp-controller="Account" asp-action="Profile">
-                                @if (currentUser != null && !string.IsNullOrEmpty(currentUser.ProfileImage))
-                                {
-                                    <img src="@currentUser.ProfileImage"
-                                         style="width:24px; height:24px; border-radius:50%; object-fit:cover;" />
-                                }
-                                else
-                                {
-                                    <i class="bi bi-person-circle"></i>
-                                }
-                                <span>@User.Identity!.Name?.Split('@')[0]</span>
-                            </a>
-                            <form asp-controller="Account" asp-action="Logout" method="post">
-                                <button class="btn btn-outline-light btn-sm rounded-pill">Logout</button>
-                            </form>
+                            <span class="plan-badge" title="Your rent payment plan">
+                                <i class="bi bi-credit-card-2-front"></i>
+                                @paymentPlan plan
+                            </span>
                         }
-                        else
-                        {
-                            <a class="btn btn-outline-light btn-sm rounded-pill" asp-controller="Account"
-                               asp-action="Login">Log in</a>
-                            <a class="btn btn-warning btn-sm rounded-pill" asp-controller="Account"
-                               asp-action="Register">Sign up</a>
-                        }
-                    </div>
-
-                    <!-- Hamburger for mobile -->
-                    <button class="navbar-toggler d-lg-none border-0" type="button" data-bs-toggle="collapse"
-                            data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-
-                </div>
-
-
-                <!-- Bottom Row - desktop links -->
-                
-                    <ul class="navbar-nav gap-4 fw-semibold">
-                        <li class="nav-item">
-                            <a class="nav-link text-white px-0" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white px-0" asp-controller="House" asp-action="Index">Houses</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white px-0" asp-controller="Home" asp-action="Contact">Contact</a>
-                        </li>
-                        @if (User.Identity!.IsAuthenticated && User.IsInRole("Tenant"))
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-white px-0" asp-controller="Rental" asp-action="MyRequests">My
-                                    Requests</a>
-                                </li>
-                            }
-                            @if (User.Identity!.IsAuthenticated && User.IsInRole("Landlord"))
+                        <a class="btn btn-header-ghost d-flex align-items-center gap-2"
+                           asp-controller="Account" asp-action="Profile">
+                            @if (currentUser != null && !string.IsNullOrEmpty(currentUser.ProfileImage))
                             {
-                                <li class="nav-item">
-                                    <a class="nav-link text-white px-0" asp-controller="Rental" asp-action="Manage">Manage
-                                        Requests</a>
-                                    </li>
-                                }
-                                @if (User.Identity!.IsAuthenticated && User.IsInRole("Admin"))
-                                {
-                                    <li class="nav-item">
-                                        <a class="nav-link text-white px-0" asp-controller="Admin" asp-action="Index">Dashboard</a>
-                                    </li>
-                                }
-                            </ul>
-                        </div>
-
-                    </div>
-
-                    <!-- Mobile collapse menu -->
-                    <div class="collapse" id="navbarNav">
-                        <ul class="navbar-nav mt-2">
-                            <li class="nav-item">
-                                <a class="nav-link text-white px-0" asp-controller="Home" asp-action="Index">Home</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-white px-0" asp-controller="House" asp-action="Index">Houses</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-white px-0" asp-controller="Home" asp-action="Contact">Contact</a>
-                            </li>
-                            @if (User.Identity!.IsAuthenticated && User.IsInRole("Tenant"))
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link text-white px-0" asp-controller="Rental" asp-action="MyRequests">My Requests</a>
-                                </li>
-                            }
-                            @if (User.Identity!.IsAuthenticated && User.IsInRole("Landlord"))
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link text-white px-0" asp-controller="Rental" asp-action="Manage">Manage Requests</a>
-                                </li>
-                            }
-                            @if (User.Identity!.IsAuthenticated && User.IsInRole("Admin"))
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link text-white px-0" asp-controller="Admin" asp-action="Index">Dashboard</a>
-                                </li>
-                            }
-                            <hr class="border-light" />
-                            @if (User.Identity!.IsAuthenticated)
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link text-white px-0" asp-controller="Account" asp-action="Profile">👤 Profile</a>
-                                </li>
-                                <li class="nav-item pb-2">
-                                    <form asp-controller="Account" asp-action="Logout" method="post">
-                                        <button class="btn btn-outline-light btn-sm ms-3">Logout</button>
-                                    </form>
-                                </li>
+                                <img src="@currentUser.ProfileImage" class="header-avatar" alt="Profile" />
                             }
                             else
                             {
-                                <li class="nav-item">
-                                    <a class="nav-link text-white px-0" asp-controller="Account" asp-action="Login">Log in</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link text-white px-0" asp-controller="Account" asp-action="Register">Sign up</a>
-                                </li>
+                                <i class="bi bi-person-circle"></i>
                             }
-                        </ul>
+                            <span>@User.Identity!.Name?.Split('@')[0]</span>
+                        </a>
+                        <form asp-controller="Account" asp-action="Logout" method="post" class="m-0">
+                            <button class="btn btn-header-ghost">Logout</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <a class="btn btn-header-ghost" asp-controller="Account" asp-action="Login">Log in</a>
+                        <a class="btn btn-header-cta" asp-controller="Account" asp-action="Register">Sign up</a>
+                    }
+                </div>
+
+                <!-- Hamburger (mobile) -->
+                <button class="navbar-toggler d-lg-none border-0 text-white" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#mobileMenu" aria-controls="mobileMenu" aria-expanded="false">
+                    <i class="bi bi-list fs-1"></i>
+                </button>
+            </div>
+
+            <!-- ── Bottom row: role-based nav links UNDER the logo ── -->
+            <nav class="header-nav d-none d-lg-flex">
+                <a class="header-link @(currentController == "Home" && currentAction == "Index" ? "active" : "")"
+                   asp-controller="Home" asp-action="Index">Home</a>
+
+                <a class="header-link @(currentController == "House" ? "active" : "")"
+                   asp-controller="House" asp-action="Index">Houses</a>
+
+                <a class="header-link @(currentAction == "Contact" ? "active" : "")"
+                   asp-controller="Home" asp-action="Contact">Contact</a>
+
+                @if (User.Identity!.IsAuthenticated && User.IsInRole("Tenant"))
+                {
+                    <a class="header-link @(currentController == "Rental" && currentAction == "MyRequests" ? "active" : "")"
+                       asp-controller="Rental" asp-action="MyRequests">My Requests</a>
+                }
+                @if (User.Identity!.IsAuthenticated && User.IsInRole("Landlord"))
+                {
+                    <a class="header-link @(currentController == "Rental" && currentAction == "Manage" ? "active" : "")"
+                       asp-controller="Rental" asp-action="Manage">Manage Requests</a>
+                }
+                @if (User.Identity!.IsAuthenticated && User.IsInRole("Admin"))
+                {
+                    <a class="header-link @(currentController == "Admin" ? "active" : "")"
+                       asp-controller="Admin" asp-action="Index">Dashboard</a>
+                }
+            </nav>
+
+            <!-- ── Mobile collapse menu ── -->
+            <div class="collapse d-lg-none" id="mobileMenu">
+                <ul class="navbar-nav pb-3">
+                    <li><a class="header-link d-block py-2" asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li><a class="header-link d-block py-2" asp-controller="House" asp-action="Index">Houses</a></li>
+                    <li><a class="header-link d-block py-2" asp-controller="Home" asp-action="Contact">Contact</a></li>
+                    @if (User.Identity!.IsAuthenticated && User.IsInRole("Tenant"))
+                    {
+                        <li><a class="header-link d-block py-2" asp-controller="Rental" asp-action="MyRequests">My Requests</a></li>
+                    }
+                    @if (User.Identity!.IsAuthenticated && User.IsInRole("Landlord"))
+                    {
+                        <li><a class="header-link d-block py-2" asp-controller="Rental" asp-action="Manage">Manage Requests</a></li>
+                    }
+                    @if (User.Identity!.IsAuthenticated && User.IsInRole("Admin"))
+                    {
+                        <li><a class="header-link d-block py-2" asp-controller="Admin" asp-action="Index">Dashboard</a></li>
+                    }
+                    <li><hr class="border-light" /></li>
+                    @if (User.Identity!.IsAuthenticated)
+                    {
+                        <li><a class="header-link d-block py-2" asp-controller="Account" asp-action="Profile"><i class="bi bi-person-circle me-1"></i> Profile</a></li>
+                        <li class="py-2">
+                            <form asp-controller="Account" asp-action="Logout" method="post">
+                                <button class="btn btn-header-ghost btn-sm">Logout</button>
+                            </form>
+                        </li>
+                    }
+                    else
+                    {
+                        <li><a class="header-link d-block py-2" asp-controller="Account" asp-action="Login">Log in</a></li>
+                        <li><a class="header-link d-block py-2" asp-controller="Account" asp-action="Register">Sign up</a></li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow-1 @(currentController == "Home" && currentAction == "Index" ? "" : "py-4")">
+        @if (currentController == "Home" && currentAction == "Index")
+        {
+            @RenderBody()
+        }
+        else
+        {
+            <div class="container">
+                @RenderBody()
+            </div>
+        }
+    </main>
+
+    <!-- ── Footer ── -->
+    <footer class="site-footer">
+        <div class="container-xl">
+            <div class="row gy-4 py-5">
+                <div class="col-lg-4 col-md-6">
+                    <a class="brand d-inline-flex align-items-center gap-2 mb-3" asp-controller="Home" asp-action="Index">
+                        <span class="brand-icon"><i class="bi bi-house-door-fill"></i></span>
+                        <span class="brand-text">House Renting</span>
+                    </a>
+                    <p class="footer-desc">
+                        Find your perfect rental home in Cambodia. Browse houses, villas,
+                        condos and apartments with a modern experience.
+                    </p>
+                    <div class="d-flex gap-2">
+                        <a href="#" class="footer-social"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="footer-social"><i class="bi bi-telegram"></i></a>
+                        <a href="#" class="footer-social"><i class="bi bi-instagram"></i></a>
                     </div>
-
                 </div>
-            </nav>
 
-            <main class="py-4 flex-grow-1">
-                <div class="container">
-                    @RenderBody()
+                <div class="col-lg-2 col-md-6 col-6">
+                    <h6 class="footer-title">Quick Links</h6>
+                    <ul class="footer-links">
+                        <li><a asp-controller="Home" asp-action="Index">Home</a></li>
+                        <li><a asp-controller="House" asp-action="Index">Houses</a></li>
+                        <li><a asp-controller="Home" asp-action="Contact">Contact</a></li>
+                        @if (User.Identity!.IsAuthenticated && User.IsInRole("Tenant"))
+                        {
+                            <li><a asp-controller="Rental" asp-action="MyRequests">My Requests</a></li>
+                        }
+                    </ul>
                 </div>
-            </main>
 
-            <footer class="py-3 text-center" style="background-color:#0d2f73; color:#d0e4f7;">
-                <p class="mb-0">&copy; 2026 House Renting System</p>
-            </footer>
+                <div class="col-lg-3 col-md-6 col-6">
+                    <h6 class="footer-title">Property Types</h6>
+                    <ul class="footer-links">
+                        <li><a href="/House?type=House">House</a></li>
+                        <li><a href="/House?type=Villa">Villa</a></li>
+                        <li><a href="/House?type=Condo">Condo</a></li>
+                        <li><a href="/House?type=Apartment">Apartment</a></li>
+                        <li><a href="/House?type=Studio">Studio</a></li>
+                    </ul>
+                </div>
 
-            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-            @* <script>
-                const input = document.getElementById('searchInput');
-                const dropdown = document.getElementById('searchDropdown');
+                <div class="col-lg-3 col-md-6">
+                    <h6 class="footer-title">Contact</h6>
+                    <ul class="footer-links">
+                        <li><i class="bi bi-geo-alt me-2"></i>Phnom Penh, Cambodia</li>
+                        <li><i class="bi bi-envelope me-2"></i>support@houserenting.com</li>
+                        <li><i class="bi bi-telephone me-2"></i>+855 12 345 678</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom text-center py-3">
+            &copy; 2026 House Renting System. All rights reserved.
+        </div>
+    </footer>
 
-                if (input) {
-                    let debounceTimer;
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-                    input.addEventListener('input', function () {
-                        clearTimeout(debounceTimer);
-                        const query = this.value.trim();
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-bottom-nav d-lg-none">
 
-                        if (query.length < 2) {
-                            dropdown.classList.add('d-none');
-                            dropdown.innerHTML = '';
-                            return;
-                        }
+        <a asp-controller="Home" asp-action="Index"
+           class="@(currentController == "Home" && currentAction == "Index" ? "active" : "")">
+            <i class="bi bi-house-heart"></i>
+            <span>Home</span>
+        </a>
 
-                        debounceTimer = setTimeout(async () => {
-                            try {
-                                const res = await fetch(`/api/houses?search=${encodeURIComponent(query)}&pageSize=6`);
-                                const json = await res.json();
-                                const houses = json.data.houses; // <-- unwrap the ApiResponse
+        <a asp-controller="House" asp-action="Index"
+           class="@(currentController == "House" ? "active" : "")">
+            <i class="bi bi-buildings"></i>
+            <span>Houses</span>
+        </a>
 
-                                if (houses.length === 0) {
-                                    dropdown.innerHTML = '<div class="p-3 text-muted">No results found</div>';
-                                } else {
-                                    dropdown.innerHTML = `
-                                        <div class="p-2 text-muted small fw-bold border-bottom">HOUSES</div>
-                                        ${houses.map(h => `
-                                            <a href="/House/Details/${h.houseId}" class="d-flex align-items-center gap-3 p-3 text-decoration-none border-bottom search-item">
-                                                <img src="${h.imageUrl || '/images/no-image.png'}"
-                                                    style="width:60px; height:60px; object-fit:cover; border-radius:8px;" />
-                                                <div>
-                                                    <div class="fw-bold text-dark">${h.title}</div>
-                                                    <div class="text-muted small">${h.address}, ${h.city}</div>
-                                                    <div class="text-success small">$${h.price} / month</div>
-                                                </div>
-                                            </a>
-                                        `).join('')}
-                                        <a href="/House?search=${encodeURIComponent(query)}"
-                                        class="d-block text-center p-2 text-primary small">
-                                            View all results for "${query}"
-                                        </a>
-                                    `;
-                                }
+        <a asp-controller="Home" asp-action="Contact"
+           class="@(currentAction == "Contact" ? "active" : "")">
+            <i class="bi bi-envelope"></i>
+            <span>Contact</span>
+        </a>
 
-                                dropdown.classList.remove('d-none');
-                            } catch (err) {
-                                console.error('Search failed:', err);
-                                dropdown.innerHTML = '<div class="p-3 text-danger">Something went wrong</div>';
-                                dropdown.classList.remove('d-none');
-                            }
-                        }, 250); // debounce so it doesn't fire on every keystroke
-                    });
+        @if (User.Identity!.IsAuthenticated)
+        {
+            <a asp-controller="Account" asp-action="Profile">
+                <i class="bi bi-person-circle"></i>
+                <span>Profile</span>
+            </a>
+        }
+        else
+        {
+            <a asp-controller="Account" asp-action="Login">
+                <i class="bi bi-box-arrow-in-right"></i>
+                <span>Login</span>
+            </a>
+        }
 
-                    document.addEventListener('click', function (e) {
-                        if (!document.getElementById('searchWrapper').contains(e.target)) {
-                            dropdown.classList.add('d-none');
-                        }
-                    });
-                }
-            </script> *@
-            <!-- Mobile Bottom Navigation -->
-            <nav class="mobile-bottom-nav d-lg-none">
+    </nav>
+</body>
 
-                <a asp-controller="Home" asp-action="Index"
-                   class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" ? "active" : "")">
-                    <i class="bi bi-house-heart"></i>
-                    <span>Home</span>
-                </a>
-
-                <a asp-controller="House" asp-action="Index"
-                   class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "House" ? "active" : "")">
-                    <i class="bi bi-buildings"></i>
-                    <span>Houses</span>
-                </a>
-
-                <a asp-controller="Home" asp-action="Contact"
-                   class="@(ViewContext.RouteData.Values["action"]?.ToString() == "Contact" ? "active" : "")">
-                    <i class="bi bi-envelope"></i>
-                    <span>Contact</span>
-                </a>
-
-                @if (User.Identity!.IsAuthenticated)
-                {
-                    <a asp-controller="Account" asp-action="Profile">
-                        <i class="bi bi-person-circle"></i>
-                        <span>Profile</span>
-                    </a>
-                }
-                else
-                {
-                    <a asp-controller="Account" asp-action="Login">
-                        <i class="bi bi-box-arrow-in-right"></i>
-                        <span>Login</span>
-                    </a>
-                }
-
-            </nav>
-        </body>
-
-    </html>
+</html>
