@@ -1,6 +1,16 @@
 @model house_renting.Models.House
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<house_renting.Models.ApplicationUser> UserManager
 @{
     ViewData["Title"] = @Model.Title;
+
+    // Tenant's preferred payment plan decides how the price is displayed
+    var showYearly = false;
+    if (User.Identity!.IsAuthenticated && User.IsInRole("Tenant"))
+    {
+        var me = await UserManager.GetUserAsync(User);
+        showYearly = me?.PreferredPaymentPlan == "Yearly";
+    }
 }
 
 @if (!string.IsNullOrEmpty(Model.ImageUrl) || Model.HouseImages.Any())
@@ -66,8 +76,19 @@
                 <small class="text-muted">Bathrooms</small>
             </div>
             <div class="col">
-                <h5 class="text-success">$@Model.MonthlyPrice</h5>
-                <small class="text-muted">Per month</small>
+                @if (showYearly && Model.AllowYearlyRental)
+                {
+                    <h5 class="text-success">
+                        $@Model.YearlyPrice.ToString("N0")
+                        <span class="discount-chip">-@Model.YearlyDiscountPercent.ToString("0")%</span>
+                    </h5>
+                    <small class="text-muted">Per year (yearly plan)</small>
+                }
+                else
+                {
+                    <h5 class="text-success">$@Model.MonthlyPrice</h5>
+                    <small class="text-muted">Per month</small>
+                }
             </div>
             <div class="col">
                 <h5>@Model.Status</h5>

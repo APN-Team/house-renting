@@ -1,7 +1,17 @@
 @using System.Security.Claims
+@using Microsoft.AspNetCore.Identity
 @model IEnumerable<house_renting.Models.House>
+@inject UserManager<house_renting.Models.ApplicationUser> UserManager
 @{
     ViewData["Title"] = "Available Houses";
+
+    // Tenant's preferred payment plan decides how prices are displayed
+    var showYearly = false;
+    if (User.Identity!.IsAuthenticated && User.IsInRole("Tenant"))
+    {
+        var me = await UserManager.GetUserAsync(User);
+        showYearly = me?.PreferredPaymentPlan == "Yearly";
+    }
     var currentType = ViewBag.CurrentType as string;
     var currentCity = ViewBag.CurrentCity as string;
     var currentSearch = ViewBag.CurrentSearch as string;
@@ -106,7 +116,18 @@
                              title="Pin " width="20" height="20"> @house.Address, <span
                         class="text-primary">@house.City</span>
                     </p>
-                    <p class="fw-bold text-success">$@house.MonthlyPrice / month</p>
+                    @if (showYearly && house.AllowYearlyRental)
+                    {
+                        <p class="fw-bold text-success mb-1">
+                            $@house.YearlyPrice.ToString("N0") / year
+                            <span class="discount-chip">-@house.YearlyDiscountPercent.ToString("0")%</span>
+                        </p>
+                        <p class="text-muted small mb-2"><s>$@((house.MonthlyPrice * 12).ToString("N0")) / year</s> — yearly plan discount applied</p>
+                    }
+                    else
+                    {
+                        <p class="fw-bold text-success">$@house.MonthlyPrice / month</p>
+                    }
                     @if (house.Landlord != null)
                     {
                         <p class="text-muted small mb-2">🏠 Listed by <strong>@house.Landlord.FullName</strong></p>

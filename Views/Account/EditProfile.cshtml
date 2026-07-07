@@ -5,41 +5,68 @@
 
 <div class="row justify-content-center">
     <div class="col-md-6">
-        <div class="card shadow">
-            <div class="card-body p-4">
-                <h3 class="mb-4 text-center">Edit Profile</h3>
+        <div class="auth-card">
+            <h3 class="mb-4 text-center">Edit Profile</h3>
 
-                <div class="text-center mb-4">
-                    @if (!string.IsNullOrEmpty(Model.ProfileImage))
-                    {
-                        <img src="@Model.ProfileImage"
-                             style="width:90px; height:90px; border-radius:50%; object-fit:cover; border:3px solid #0d2f73;" />
-                    }
-                    else
-                    {
-                        <div style="width:90px; height:90px; border-radius:50%; background-color:#0d2f73; color:white; font-size:2.5rem; display:flex; align-items:center; justify-content:center; margin:0 auto;">
-                            @Model.FullName.Substring(0, 1).ToUpper()
-                        </div>
-                    }
+            <div class="text-center mb-4">
+                @if (!string.IsNullOrEmpty(Model.ProfileImage))
+                {
+                    <img src="@Model.ProfileImage"
+                         style="width:90px; height:90px; border-radius:50%; object-fit:cover; border:3px solid #0d2f73;" />
+                }
+                else
+                {
+                    <div style="width:90px; height:90px; border-radius:50%; background-color:#0d2f73; color:white; font-size:2.5rem; display:flex; align-items:center; justify-content:center; margin:0 auto;">
+                        @Model.FullName.Substring(0, 1).ToUpper()
+                    </div>
+                }
+            </div>
+
+            <form method="post" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" name="fullName" class="form-control" value="@Model.FullName" required />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Profile Picture</label>
+                    <input type="file" name="profileImage" class="form-control" accept="image/*" />
+                    <small class="text-muted">Leave empty to keep current picture</small>
                 </div>
 
-                <form method="post" enctype="multipart/form-data">
+                @if (User.IsInRole("Tenant"))
+                {
+                    <!-- Tenants can switch their rent payment plan any time.
+                         Yearly = discounted prices platform-wide (per landlord's discount %) -->
                     <div class="mb-3">
-                        <label class="form-label">Full Name</label>
-                        <input type="text" name="fullName" class="form-control" value="@Model.FullName" required />
+                        <label class="form-label">Rent Payment Plan</label>
+                        <div class="plan-options">
+                            <label class="plan-option">
+                                <input type="radio" name="paymentPlan" value="Monthly"
+                                       checked="@(Model.PreferredPaymentPlan != "Yearly")" />
+                                <span class="plan-option-body">
+                                    <i class="bi bi-calendar-month"></i>
+                                    <span class="plan-option-title">Monthly</span>
+                                    <span class="plan-option-desc">Standard price, no discount</span>
+                                </span>
+                            </label>
+                            <label class="plan-option">
+                                <input type="radio" name="paymentPlan" value="Yearly"
+                                       checked="@(Model.PreferredPaymentPlan == "Yearly")" />
+                                <span class="plan-option-body">
+                                    <i class="bi bi-calendar-check"></i>
+                                    <span class="plan-option-title">Yearly</span>
+                                    <span class="plan-option-desc">Pay yearly &amp; get each landlord's discount</span>
+                                </span>
+                            </label>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Profile Picture</label>
-                        <input type="file" name="profileImage" class="form-control" accept="image/*" />
-                        <small class="text-muted">Leave empty to keep current picture</small>
-                    </div>
-                    <div class="d-flex gap-2">
-                        <button type="submit" class="btn btn-success w-100">Save Changes</button>
-                        <a href="/Account/Profile" class="btn btn-secondary w-100">Cancel</a>
-                    </div>
-                </form>
+                }
 
-            </div>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-auth-primary w-100">Save Changes</button>
+                    <a href="/Account/Profile" class="btn btn-secondary w-100">Cancel</a>
+                </div>
+            </form>
         </div>
     </div>
 </div>
