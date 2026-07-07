@@ -8,22 +8,46 @@ This project allows tenants to search rental properties, landlords to manage lis
 
 # Team Members
 
-| Name | Role |
-|------|------|
-| Rol Akphinoun | Frontend & API Development |
-| Chhun Menghour | Backend & MVC Features |
+| Name | Responsibilities |
+|------|-------------------|
+| **Rol Akphinoun** | Frontend UI Design, REST API Development, DTO Architecture, Dashboard API, Documentation |
+| **Chhun Menghour** | Backend MVC Development, Authentication, CRUD Features, Database Models |
 
 ---
 
-# Technology Stack
+# 🛠 Technology Stack
 
-- User Authentication
-- House Listings
-- Rental Requests
-- Reviews
-- Admin Dashboard
-- REST API
+## Frontend
+
+- HTML5
+- CSS3
+- Bootstrap 5
+- JavaScript
+- Razor Views
+
+## Backend
+
+- ASP.NET Core MVC
+- C#
+- Entity Framework Core
+- ASP.NET Identity
+
+## Database
+
+- SQLite
+
+## API
+
+- RESTful API
+- DTO Architecture
 - Swagger Documentation
+
+## Development Tools
+
+- Visual Studio
+- Visual Studio Code
+- Git
+- GitHub
 
 ---
 
@@ -77,45 +101,74 @@ Swagger UI
 ``` 
 https://localhost:5155/swagger
 ```
-Default Admin
 
-Email:
-admin@gmail.com
+# 🚀 Running the Project
 
-Password:
-Admin@123
+Restore packages
 
----
-
-# Project Structure
-
-```
-Controllers/
-Models/
-Views/
-Data/
-DTOs/
-wwwroot/
-```
-
----
-
-# Database
-
-SQLite
-
-```
-houserenting.db
-```
-
----
-
-## Running
-
+```bash
 dotnet restore
+```
 
+Apply migrations (if needed)
+
+```bash
+dotnet ef database update
+```
+
+Run the project
+
+```bash
 dotnet run
+```
 
-Open:
+---
 
-https://localhost:5155
+# 🔐 Default Administrator Account
+
+Email
+
+```
+admin@gmail.com
+```
+
+Password
+
+```
+Admin@123
+```
+
+## Final Project Summary
+
+### Frontend
+
+- Modern responsive UI
+- Hero landing page
+- Property cards redesign
+- Dashboard redesign
+- Responsive navigation
+- Improved user experience
+
+### Backend
+
+- RESTful APIs
+- DTO Architecture
+- Dashboard API
+- Rental API
+- House API
+- Standard API responses
+
+### Database
+
+- Entity Framework Core
+- SQLite
+- Automatic Demo Data Seeder
+- CSV Import Support
+
+### Documentation
+
+- README
+- API Notes
+- Changelog
+- Swagger Documentation
+
