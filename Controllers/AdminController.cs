@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using house_renting.Data;
 using house_renting.Models;
+using house_renting.DTOs.Dashboard;
 
 namespace house_renting.Controllers;
 
@@ -26,7 +27,67 @@ public class AdminController : Controller
         ViewBag.TotalHouses = await _context.Houses.CountAsync();
         ViewBag.TotalRequests = await _context.RentalRequests.CountAsync();
         ViewBag.PendingRequests = await _context.RentalRequests.CountAsync(r => r.Status == "Pending");
-        return View();
+        ViewBag.PendingApprovals = await _context.Houses.CountAsync(h => !h.IsApproved);
+
+        // ── House type distribution (for the dashboard chart) ──
+        ViewBag.HouseTypeStats = await _context.Houses
+            .GroupBy(h => h.HouseType)
+            .Select(g => new { Type = g.Key, Count = g.Count() })
+            .OrderByDescending(g => g.Count)
+            .ToDictionaryAsync(g => g.Type, g => g.Count);
+
+        // ── Landlord management: every landlord + how many properties they own,
+        //    sorted so the landlord with the MOST properties is on top ──
+        var landlordUsers = await _userManager.GetUsersInRoleAsync("Landlord");
+
+        var houseCounts = await _context.Houses
+            .Where(h => h.LandlordId != null)
+            .GroupBy(h => h.LandlordId!)
+            .Select(g => new
+            {
+                LandlordId = g.Key,
+                Total = g.Count(),
+                Available = g.Count(h => h.Status == "Available"),
+                Pending = g.Count(h => !h.IsApproved)
+            })
+            .ToDictionaryAsync(g => g.LandlordId);
+
+        var landlordStats = landlordUsers
+            .Select(l => new LandlordStatsDto
+            {
+                Id = l.Id,
+                FullName = l.FullName,
+                Email = l.Email,
+                ProfileImage = l.ProfileImage,
+                CreatedAt = l.CreatedAt,
+                HouseCount = houseCounts.TryGetValue(l.Id, out var c) ? c.Total : 0,
+                AvailableCount = houseCounts.TryGetValue(l.Id, out var a) ? a.Available : 0,
+                PendingCount = houseCounts.TryGetValue(l.Id, out var pnd) ? pnd.Pending : 0
+            })
+            .OrderByDescending(l => l.HouseCount)
+            .ThenBy(l => l.FullName)
+            .ToList();
+
+        ViewBag.TotalLandlords = landlordStats.Count;
+        ViewBag.TopLandlord = landlordStats.FirstOrDefault(l => l.HouseCount > 0);
+
+        return View(landlordStats);
+    }
+
+    // GET: /Admin/LandlordHouses/{id}
+    // Shows exactly which properties a specific landlord owns.
+    public async Task<IActionResult> LandlordHouses(string id)
+    {
+        var landlord = await _userManager.FindByIdAsync(id);
+        if (landlord == null) return NotFound();
+
+        var houses = await _context.Houses
+            .Where(h => h.LandlordId == id)
+            .OrderByDescending(h => h.CreatedAt)
+            .ToListAsync();
+
+        ViewBag.Landlord = landlord;
+        return View(houses);
     }
 
     // GET: /Admin/Users

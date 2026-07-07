@@ -1,0 +1,75 @@
+﻿@model IEnumerable<house_renting.Models.House>
+@{
+    var landlord = ViewBag.Landlord as house_renting.Models.ApplicationUser;
+    ViewData["Title"] = $"{landlord?.FullName}'s Properties";
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
+    <div class="d-flex align-items-center gap-3">
+        @if (!string.IsNullOrEmpty(landlord?.ProfileImage))
+        {
+            <img src="@landlord.ProfileImage" class="landlord-avatar-lg" alt="@landlord.FullName" />
+        }
+        else
+        {
+            <span class="landlord-avatar-lg landlord-avatar-fallback">
+                @landlord?.FullName.Substring(0, 1).ToUpper()
+            </span>
+        }
+        <div>
+            <h2 class="dash-title mb-1">@landlord?.FullName</h2>
+            <p class="text-muted mb-0">
+                <i class="bi bi-envelope me-1"></i>@landlord?.Email
+                <span class="mx-2">•</span>
+                Owns <strong>@Model.Count()</strong> propert@(Model.Count() != 1 ? "ies" : "y") on the platform
+            </p>
+        </div>
+    </div>
+    <a href="/Admin" class="btn btn-dash-action"><i class="bi bi-arrow-left"></i> Back to Dashboard</a>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="dash-panel text-center py-5">
+        <i class="bi bi-house-slash fs-1 text-muted"></i>
+        <p class="text-muted mt-3 mb-0">This landlord has no properties listed yet.</p>
+    </div>
+}
+else
+{
+    <div class="row g-4">
+        @foreach (var house in Model)
+        {
+            <div class="col-12 col-sm-6 col-lg-4">
+                <div class="feature-card h-100">
+                    <div class="feature-card-img">
+                        <img src="@(string.IsNullOrEmpty(house.ImageUrl) ? "/images/no-image.png" : house.ImageUrl)"
+                             alt="@house.Title" loading="lazy"
+                             onerror="this.src='/images/no-image.png'">
+                        <span class="price-badge">$@house.MonthlyPrice / month</span>
+                        <span class="type-chip">@house.HouseType</span>
+                    </div>
+                    <div class="feature-card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <h5 class="feature-card-title">@house.Title</h5>
+                            <span class="badge @(house.Status == "Available" ? "bg-success" : house.Status == "Rented" ? "bg-secondary" : "bg-warning text-dark")">
+                                @house.Status
+                            </span>
+                        </div>
+                        <p class="feature-card-location">
+                            <i class="bi bi-geo-alt-fill"></i> @house.Address, @house.City
+                        </p>
+                        <div class="feature-card-meta mb-3">
+                            <span><i class="bi bi-door-closed"></i> @house.Bedrooms Beds</span>
+                            <span><i class="bi bi-droplet"></i> @house.Bathrooms Baths</span>
+                            <span><i class="bi bi-arrows-fullscreen"></i> @house.Area m²</span>
+                        </div>
+                        <a href="/House/Details/@house.HouseId" class="btn btn-view w-100">
+                            <i class="bi bi-eye"></i> View Details
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

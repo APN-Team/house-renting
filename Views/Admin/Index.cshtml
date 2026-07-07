@@ -1,46 +1,206 @@
+@model IEnumerable<house_renting.DTOs.Dashboard.LandlordStatsDto>
+@using System.Text.Json
 @{
     ViewData["Title"] = "Admin Dashboard";
+    var topLandlord = ViewBag.TopLandlord as house_renting.DTOs.Dashboard.LandlordStatsDto;
+    var houseTypeStats = ViewBag.HouseTypeStats as Dictionary<string, int> ?? new Dictionary<string, int>();
 }
 
-<h2 class="mb-4">Admin Dashboard</h2>
+<!-- ── Header ── -->
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
+    <div>
+        <h2 class="dash-title mb-1">Admin Dashboard</h2>
+        <p class="text-muted mb-0">Platform overview &amp; landlord management</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="/Admin/Users" class="btn btn-dash-action">
+            <i class="bi bi-people"></i> Manage Users
+        </a>
+        <a href="/Admin/Houses" class="btn btn-dash-action">
+            <i class="bi bi-houses"></i> Manage Houses
+        </a>
+        <a href="/Admin/Requests" class="btn btn-dash-action">
+            <i class="bi bi-inbox"></i> All Requests
+        </a>
+    </div>
+</div>
 
-<div class="row mb-4">
-    <div class="col-md-3">
-        <div class="card text-white bg-primary text-center shadow">
-            <div class="card-body">
-                <h2 style="color:white;">@ViewBag.TotalUsers</h2>
-                <p class="mb-0">Total Users</p>
+<!-- ── Stat cards ── -->
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-4 col-xl">
+        <div class="stat-card">
+            <div class="stat-icon"><i class="bi bi-people-fill"></i></div>
+            <div>
+                <h3 class="stat-value">@ViewBag.TotalUsers</h3>
+                <p class="stat-label">Total Users</p>
             </div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card text-white bg-success text-center shadow">
-            <div class="card-body">
-                <h2>@ViewBag.TotalHouses</h2>
-                <p class="mb-0">Total Houses</p>
+    <div class="col-6 col-md-4 col-xl">
+        <div class="stat-card">
+            <div class="stat-icon"><i class="bi bi-person-badge-fill"></i></div>
+            <div>
+                <h3 class="stat-value">@ViewBag.TotalLandlords</h3>
+                <p class="stat-label">Landlords</p>
             </div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card text-white bg-info text-center shadow">
-            <div class="card-body">
-                <h2>@ViewBag.TotalRequests</h2>
-                <p class="mb-0">Total Requests</p>
+    <div class="col-6 col-md-4 col-xl">
+        <div class="stat-card">
+            <div class="stat-icon"><i class="bi bi-houses-fill"></i></div>
+            <div>
+                <h3 class="stat-value">@ViewBag.TotalHouses</h3>
+                <p class="stat-label">Total Houses</p>
             </div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card text-white bg-warning text-center shadow">
-            <div class="card-body">
-                <h2>@ViewBag.PendingRequests</h2>
-                <p class="mb-0">Pending Requests</p>
+    <div class="col-6 col-md-6 col-xl">
+        <div class="stat-card">
+            <div class="stat-icon"><i class="bi bi-inbox-fill"></i></div>
+            <div>
+                <h3 class="stat-value">@ViewBag.TotalRequests</h3>
+                <p class="stat-label">Rental Requests</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-6 col-xl">
+        <div class="stat-card stat-card-warning">
+            <div class="stat-icon"><i class="bi bi-hourglass-split"></i></div>
+            <div>
+                <h3 class="stat-value">@ViewBag.PendingRequests</h3>
+                <p class="stat-label">Pending Requests</p>
             </div>
         </div>
     </div>
 </div>
 
-<div class="d-flex gap-3">
-    <a href="/Admin/Users" class="btn btn-outline-primary"><img src="https://cdn-icons-png.flaticon.com/128/33/33308.png" loading="lazy" alt="Multiple users silhouette " title="Multiple users silhouette " width="20" height="20"> Manage Users</a>
-    <a href="/Admin/Houses" class="btn btn-outline-success"><img src="https://cdn-icons-png.flaticon.com/128/25/25694.png" loading="lazy" alt="Home " title="Home " width="20" height="20"> Manage Houses</a>
-    <a href="/Admin/Requests" class="btn btn-outline-info"><img src="https://cdn-icons-png.flaticon.com/128/6293/6293965.png" loading="lazy" alt="Research " title="Research " width="20" height="20"> View All Requests</a>
+<div class="row g-4 mb-4">
+
+    <!-- ── Landlord management table ── -->
+    <div class="col-lg-8">
+        <div class="dash-panel h-100">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="dash-panel-title mb-0">
+                    <i class="bi bi-person-badge me-2"></i>Landlord Management
+                </h5>
+                <span class="text-muted small">@ViewBag.TotalLandlords landlord@(ViewBag.TotalLandlords != 1 ? "s" : "") on the platform</span>
+            </div>
+
+            @if (topLandlord != null)
+            {
+                <div class="top-landlord-banner mb-3">
+                    <span class="top-landlord-crown"><i class="bi bi-trophy-fill"></i></span>
+                    <div>
+                        <div class="fw-bold">@topLandlord.FullName</div>
+                        <div class="small">Top landlord — owns <strong>@topLandlord.HouseCount</strong> propert@(topLandlord.HouseCount != 1 ? "ies" : "y") on the platform</div>
+                    </div>
+                    <a href="/Admin/LandlordHouses/@topLandlord.Id" class="btn btn-sm btn-light ms-auto">
+                        View Properties
+                    </a>
+                </div>
+            }
+
+            <div class="table-responsive">
+                <table class="table dash-table align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Landlord</th>
+                            <th>Email</th>
+                            <th class="text-center">Properties</th>
+                            <th class="text-center">Available</th>
+                            <th>Joined</th>
+                            <th class="text-end">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{ int rank = 1; }
+                        @foreach (var l in Model)
+                        {
+                            <tr>
+                                <td class="text-muted">@(rank++)</td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        @if (!string.IsNullOrEmpty(l.ProfileImage))
+                                        {
+                                            <img src="@l.ProfileImage" class="landlord-avatar" alt="@l.FullName" />
+                                        }
+                                        else
+                                        {
+                                            <span class="landlord-avatar landlord-avatar-fallback">
+                                                @l.FullName.Substring(0, 1).ToUpper()
+                                            </span>
+                                        }
+                                        <span class="fw-semibold">@l.FullName</span>
+                                    </div>
+                                </td>
+                                <td class="text-muted">@l.Email</td>
+                                <td class="text-center">
+                                    <span class="count-pill">@l.HouseCount</span>
+                                </td>
+                                <td class="text-center text-muted">@l.AvailableCount</td>
+                                <td class="text-muted">@l.CreatedAt.ToShortDateString()</td>
+                                <td class="text-end">
+                                    <a href="/Admin/LandlordHouses/@l.Id" class="btn btn-sm btn-view">
+                                        <i class="bi bi-eye"></i> View
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                        @if (!Model.Any())
+                        {
+                            <tr>
+                                <td colspan="7" class="text-center text-muted py-4">No landlords registered yet.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── House type distribution chart ── -->
+    <div class="col-lg-4">
+        <div class="dash-panel h-100">
+            <h5 class="dash-panel-title mb-3">
+                <i class="bi bi-pie-chart me-2"></i>Listings by Type
+            </h5>
+            @if (houseTypeStats.Any())
+            {
+                <canvas id="houseTypeChart" height="260"></canvas>
+            }
+            else
+            {
+                <p class="text-muted">No houses on the platform yet.</p>
+            }
+        </div>
+    </div>
+
 </div>
+
+@if (houseTypeStats.Any())
+{
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script>
+        const typeData = @Html.Raw(JsonSerializer.Serialize(houseTypeStats));
+
+        new Chart(document.getElementById('houseTypeChart'), {
+            type: 'doughnut',
+            data: {
+                labels: Object.keys(typeData),
+                datasets: [{
+                    data: Object.values(typeData),
+                    backgroundColor: ['#0d2f73', '#2456b8', '#4d7fe0', '#8fb1f0', '#c6d8fa'],
+                    borderWidth: 2,
+                    borderColor: '#ffffff'
+                }]
+            },
+            options: {
+                plugins: {
+                    legend: { position: 'bottom' }
+                },
+                cutout: '60%'
+            }
+        });
+    </script>
+}
