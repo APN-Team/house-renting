@@ -103,8 +103,12 @@ public class HousesApiController : ControllerBase
                 Address = h.Address,
                 City = h.City,
                 Price = h.MonthlyPrice,
+                AllowYearlyRental = h.AllowYearlyRental,
+                YearlyDiscountPercent = h.YearlyDiscountPercent,
+                YearlyPrice = (h.MonthlyPrice * 12) - ((h.MonthlyPrice * 12) * (h.YearlyDiscountPercent / 100)),
                 Bedrooms = h.Bedrooms,
                 Bathrooms = h.Bathrooms,
+                Area = h.Area,
                 Status = h.Status,
                 HouseType = h.HouseType,
                 ImageUrl = h.ImageUrl,
@@ -129,6 +133,58 @@ public class HousesApiController : ControllerBase
         });
     }
 
+    // GET: api/houses/featured
+    /// <summary>
+    /// Get random featured houses for the home page.
+    /// </summary>
+    /// <param name="houseType">Optional house type filter (House / Villa / Condo / Apartment / Studio).</param>
+    /// <param name="count">Number of random houses to return (default 5).</param>
+    /// <returns>Random list of available houses.</returns>
+    [HttpGet("featured")]
+    public async Task<IActionResult> GetFeatured(string? houseType, int count = 5)
+    {
+        if (count < 1 || count > 20) count = 5;
+
+        var query = _context.Houses
+            .Include(h => h.Landlord)
+            .Where(h => h.Status == "Available");
+
+        if (!string.IsNullOrWhiteSpace(houseType))
+            query = query.Where(h => h.HouseType == houseType);
+
+        var houses = await query
+            .OrderBy(h => EF.Functions.Random()) // random pick from the database
+            .Take(count)
+            .Select(h => new HouseDto
+            {
+                HouseId = h.HouseId,
+                Title = h.Title,
+                Description = h.Description,
+                Address = h.Address,
+                City = h.City,
+                Price = h.MonthlyPrice,
+                AllowYearlyRental = h.AllowYearlyRental,
+                YearlyDiscountPercent = h.YearlyDiscountPercent,
+                YearlyPrice = (h.MonthlyPrice * 12) - ((h.MonthlyPrice * 12) * (h.YearlyDiscountPercent / 100)),
+                Bedrooms = h.Bedrooms,
+                Bathrooms = h.Bathrooms,
+                Area = h.Area,
+                Status = h.Status,
+                HouseType = h.HouseType,
+                ImageUrl = h.ImageUrl,
+                CreatedAt = h.CreatedAt,
+                LandlordName = h.Landlord != null ? h.Landlord.FullName : null
+            })
+            .ToListAsync();
+
+        return Ok(new ApiResponse<object>
+        {
+            Success = true,
+            Message = "Featured houses retrieved successfully.",
+            Data = new { Houses = houses }
+        });
+    }
+
     // GET: api/houses/5
     /// <summary>
     /// Get a single house.
@@ -149,8 +205,12 @@ public class HousesApiController : ControllerBase
                 Address = h.Address,
                 City = h.City,
                 Price = h.MonthlyPrice,
+                AllowYearlyRental = h.AllowYearlyRental,
+                YearlyDiscountPercent = h.YearlyDiscountPercent,
+                YearlyPrice = (h.MonthlyPrice * 12) - ((h.MonthlyPrice * 12) * (h.YearlyDiscountPercent / 100)),
                 Bedrooms = h.Bedrooms,
                 Bathrooms = h.Bathrooms,
+                Area = h.Area,
                 Status = h.Status,
                 HouseType = h.HouseType,
                 ImageUrl = h.ImageUrl,

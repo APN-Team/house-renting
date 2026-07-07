@@ -8,4 +8,5 @@ public class ApplicationUser : IdentityUser
     public string Role { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; } = DateTime.Now;
     public string? ProfileImage { get; set; }
+    public string PreferredPaymentPlan { get; set; } = "Monthly";
 }

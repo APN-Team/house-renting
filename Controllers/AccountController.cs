@@ -23,7 +23,7 @@ public class AccountController : Controller
 
     // POST: /Account/Register
     [HttpPost]
-    public async Task<IActionResult> Register(string fullName, string email, string password, string role)
+    public async Task<IActionResult> Register(string fullName, string email, string password, string role, string? paymentPlan)
     {
         var user = new ApplicationUser
         {
@@ -31,7 +31,10 @@ public class AccountController : Controller
             Email = email,
             UserName = email,
             Role = role,
-            CreatedAt = DateTime.Now
+            CreatedAt = DateTime.Now,
+            // Only tenants choose a rent payment plan. "Yearly" unlocks the
+            // landlord-defined yearly discount everywhere prices are shown.
+            PreferredPaymentPlan = (role == "Tenant" && paymentPlan == "Yearly") ? "Yearly" : "Monthly"
         };
 
         var result = await _userManager.CreateAsync(user, password);
@@ -99,10 +102,16 @@ public class AccountController : Controller
     // POST: /Account/EditProfile
     [Authorize]
     [HttpPost]
-    public async Task<IActionResult> EditProfile(string fullName, IFormFile? profileImage)
+    public async Task<IActionResult> EditProfile(string fullName, IFormFile? profileImage, string? paymentPlan)
     {
         var user = await _userManager.GetUserAsync(User);
         user!.FullName = fullName;
+
+        // Tenants can switch their rent payment plan (Monthly / Yearly)
+        if (User.IsInRole("Tenant") && (paymentPlan == "Monthly" || paymentPlan == "Yearly"))
+        {
+            user.PreferredPaymentPlan = paymentPlan;
+        }
 
         if (profileImage != null && profileImage.Length > 0)
         {

@@ -14,9 +14,18 @@ public class HouseDto
 
     public decimal Price { get; set; }
 
+    // Yearly rental info (used by frontend to show discounted yearly price)
+    public bool AllowYearlyRental { get; set; }
+
+    public decimal YearlyDiscountPercent { get; set; }
+
+    public decimal YearlyPrice { get; set; }
+
     public int Bedrooms { get; set; }
 
     public int Bathrooms { get; set; }
+
+    public double Area { get; set; }
 
     public string Status { get; set; } = string.Empty;
 
