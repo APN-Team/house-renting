@@ -162,7 +162,7 @@ public async Task<IActionResult> Edit(int id)
         existing.Description = house.Description;
         existing.Address = house.Address;
         existing.City = house.City;
-        existing.Price = house.Price;
+        existing.MonthlyPrice = house.MonthlyPrice;
         existing.Bedrooms = house.Bedrooms;
         existing.Bathrooms = house.Bathrooms;
         existing.Status = house.Status;

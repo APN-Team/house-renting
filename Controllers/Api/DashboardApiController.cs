@@ -52,7 +52,7 @@ public class DashboardApiController : ControllerBase
             TotalReviews = await _context.Reviews.CountAsync(),
 
             AverageHousePrice = await _context.Houses.AnyAsync()
-                ? await _context.Houses.AverageAsync(h => h.Price)
+                ? await _context.Houses.AverageAsync(h => h.MonthlyPrice)
                 : 0
         };
 

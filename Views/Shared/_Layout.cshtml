@@ -12,6 +12,7 @@
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -20,270 +21,278 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
+
 <body style="display:flex; flex-direction:column; min-height:100vh;">
 
-    <nav class="navbar navbar-expand-lg sticky-top" style="background-color:#3a6ea8;">
-        <div class="container">
+    <nav class="navbar navbar-expand-lg sticky-top shadow-sm" style="
+        background:#082B6C;
+        padding-top:12px;
+        padding-bottom:12px;
+        ">
+        <div class="container-fluid px-5">
 
             <div class="w-100">
                 <!-- Top Row -->
                 <div class="d-flex align-items-center justify-content-between py-2">
 
                     <!-- Logo -->
-                    <a class="navbar-brand fw-bold text-white fs-5" asp-controller="Home" asp-action="Index">
-                        <img src="https://cdn-icons-png.flaticon.com/128/25/25694.png" loading="lazy" alt="Home " title="Home " width="35" height="35"> House Renting
+                    <a class="navbar-brand fw-bold text-white fs-4 d-flex align-items-center gap-2"
+                       asp-controller="Home" asp-action="Index">
+
+                        <i class="bi bi-house-door-fill fs-2"></i>
+
+                        House Renting
+
                     </a>
 
-                   <!-- Search bar - desktop -->
-                <div class="d-none d-lg-flex w-50 position-relative" id="searchWrapper">
-                    <input class="form-control rounded-pill px-4"
-                        type="search"
-                        id="searchInput"
-                        placeholder="Search houses, condos, villas..."
-                        autocomplete="off" />
-                    <div id="searchDropdown" class="position-absolute bg-white shadow rounded w-100 d-none"
-                        style="top:42px; z-index:9999; max-height:400px; overflow-y:auto;">
+                    <!-- Search bar - desktop -->
+                    <div class="d-none d-lg-flex w-50 position-relative" id="searchWrapper">
+                        <input class="form-control rounded-pill px-4" type="search" id="searchInput"
+                               placeholder="Search houses, condos, villas..." autocomplete="off" />
+                        <div id="searchDropdown" class="position-absolute bg-white shadow rounded w-100 d-none"
+                             style="top:42px; z-index:9999; max-height:400px; overflow-y:auto;">
+                        </div>
                     </div>
-                </div>
 
                     <!-- Right buttons - hidden on mobile -->
                     <div class="d-none d-lg-flex align-items-center gap-2">
                         @if (User.Identity!.IsAuthenticated)
                         {
-                            var profileImage = (User.Identity as System.Security.Claims.ClaimsIdentity)?.FindFirst("ProfileImage")?.Value;
+                            var profileImage = (User.Identity as
+                        System.Security.Claims.ClaimsIdentity)?.FindFirst("ProfileImage")?.Value;
 
-                   <a class="btn btn-outline-light btn-sm rounded-pill d-flex align-items-center gap-2"
-                    asp-controller="Account" asp-action="Profile">
-                        @if (currentUser != null && !string.IsNullOrEmpty(currentUser.ProfileImage))
-                        {
-                            <img src="@currentUser.ProfileImage" style="width:24px; height:24px; border-radius:50%; object-fit:cover;" />
-                        }
-                        else
-                        {
-                            <i class="bi bi-person-circle"></i>
-                        }
-                        <span>@User.Identity!.Name?.Split('@')[0]</span>
-                    </a>
+                            <a class="btn btn-outline-light btn-sm rounded-pill d-flex align-items-center gap-2"
+                               asp-controller="Account" asp-action="Profile">
+                                @if (currentUser != null && !string.IsNullOrEmpty(currentUser.ProfileImage))
+                                {
+                                    <img src="@currentUser.ProfileImage"
+                                         style="width:24px; height:24px; border-radius:50%; object-fit:cover;" />
+                                }
+                                else
+                                {
+                                    <i class="bi bi-person-circle"></i>
+                                }
+                                <span>@User.Identity!.Name?.Split('@')[0]</span>
+                            </a>
                             <form asp-controller="Account" asp-action="Logout" method="post">
                                 <button class="btn btn-outline-light btn-sm rounded-pill">Logout</button>
                             </form>
                         }
                         else
                         {
-                            <a class="btn btn-outline-light btn-sm rounded-pill"
-                               asp-controller="Account" asp-action="Login">Log in</a>
-                            <a class="btn btn-warning btn-sm rounded-pill"
-                               asp-controller="Account" asp-action="Register">Sign up</a>
+                            <a class="btn btn-outline-light btn-sm rounded-pill" asp-controller="Account"
+                               asp-action="Login">Log in</a>
+                            <a class="btn btn-warning btn-sm rounded-pill" asp-controller="Account"
+                               asp-action="Register">Sign up</a>
                         }
                     </div>
 
                     <!-- Hamburger for mobile -->
-                    <button class="navbar-toggler d-lg-none border-0" type="button"
-                            data-bs-toggle="collapse"
-                            data-bs-target="#navbarNav"
-                            aria-controls="navbarNav"
-                            aria-expanded="false">
+                    <button class="navbar-toggler d-lg-none border-0" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false">
                         <span class="navbar-toggler-icon"></span>
                     </button>
 
                 </div>
 
-                <hr class="my-0 border-light opacity-25" />
 
                 <!-- Bottom Row - desktop links -->
                 <div class="d-none d-lg-flex align-items-center py-1">
-                    <ul class="navbar-nav gap-3">
+                    <ul class="navbar-nav gap-4 fw-semibold">
                         <li class="nav-item">
-                            <a class="nav-link text-white" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link text-white px-0" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-white" asp-controller="House" asp-action="Index">Houses</a>
+                            <a class="nav-link text-white px-0" asp-controller="House" asp-action="Index">Houses</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-white" asp-controller="Home" asp-action="About">About</a>
+                            <a class="nav-link text-white px-0" asp-controller="Home" asp-action="About">About</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-white" asp-controller="Home" asp-action="Contact">Contact</a>
+                            <a class="nav-link text-white px-0" asp-controller="Home" asp-action="Contact">Contact</a>
                         </li>
                         @if (User.Identity!.IsAuthenticated && User.IsInRole("Tenant"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-white" asp-controller="Rental" asp-action="MyRequests">My Requests</a>
-                            </li>
-                        }
-                        @if (User.Identity!.IsAuthenticated && User.IsInRole("Landlord"))
-                        {
+                                <a class="nav-link text-white px-0" asp-controller="Rental" asp-action="MyRequests">My
+                                    Requests</a>
+                                </li>
+                            }
+                            @if (User.Identity!.IsAuthenticated && User.IsInRole("Landlord"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-white px-0" asp-controller="Rental" asp-action="Manage">Manage
+                                        Requests</a>
+                                    </li>
+                                }
+                                @if (User.Identity!.IsAuthenticated && User.IsInRole("Admin"))
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link text-white px-0" asp-controller="Admin" asp-action="Index">Dashboard</a>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+
+                    </div>
+
+                    <!-- Mobile collapse menu -->
+                    <div class="collapse" id="navbarNav">
+                        <ul class="navbar-nav mt-2">
                             <li class="nav-item">
-                                <a class="nav-link text-white" asp-controller="Rental" asp-action="Manage">Manage Requests</a>
+                                <a class="nav-link text-white px-0" asp-controller="Home" asp-action="Index">Home</a>
                             </li>
-                        }
-                        @if (User.Identity!.IsAuthenticated && User.IsInRole("Admin"))
-                        {
                             <li class="nav-item">
-                                <a class="nav-link text-white" asp-controller="Admin" asp-action="Index">Dashboard</a>
+                                <a class="nav-link text-white px-0" asp-controller="House" asp-action="Index">Houses</a>
                             </li>
-                        }
-                    </ul>
+                            <li class="nav-item">
+                                <a class="nav-link text-white px-0" asp-controller="Home" asp-action="About">About</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white px-0" asp-controller="Home" asp-action="Contact">Contact</a>
+                            </li>
+                            @if (User.Identity!.IsAuthenticated && User.IsInRole("Tenant"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-white px-0" asp-controller="Rental" asp-action="MyRequests">My Requests</a>
+                                </li>
+                            }
+                            @if (User.Identity!.IsAuthenticated && User.IsInRole("Landlord"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-white px-0" asp-controller="Rental" asp-action="Manage">Manage Requests</a>
+                                </li>
+                            }
+                            @if (User.Identity!.IsAuthenticated && User.IsInRole("Admin"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-white px-0" asp-controller="Admin" asp-action="Index">Dashboard</a>
+                                </li>
+                            }
+                            <hr class="border-light" />
+                            @if (User.Identity!.IsAuthenticated)
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-white px-0" asp-controller="Account" asp-action="Profile">👤 Profile</a>
+                                </li>
+                                <li class="nav-item pb-2">
+                                    <form asp-controller="Account" asp-action="Logout" method="post">
+                                        <button class="btn btn-outline-light btn-sm ms-3">Logout</button>
+                                    </form>
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-white px-0" asp-controller="Account" asp-action="Login">Log in</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-white px-0" asp-controller="Account" asp-action="Register">Sign up</a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+
                 </div>
+            </nav>
 
-            </div>
+            <main class="py-4 flex-grow-1">
+                <div class="container">
+                    @RenderBody()
+                </div>
+            </main>
 
-            <!-- Mobile collapse menu -->
-            <div class="collapse" id="navbarNav">
-                <ul class="navbar-nav mt-2">
-                    <li class="nav-item">
-                        <a class="nav-link text-white" asp-controller="Home" asp-action="Index">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white" asp-controller="House" asp-action="Index">Houses</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white" asp-controller="Home" asp-action="About">About</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white" asp-controller="Home" asp-action="Contact">Contact</a>
-                    </li>
-                    @if (User.Identity!.IsAuthenticated && User.IsInRole("Tenant"))
-                    {
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-controller="Rental" asp-action="MyRequests">My Requests</a>
-                        </li>
-                    }
-                    @if (User.Identity!.IsAuthenticated && User.IsInRole("Landlord"))
-                    {
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-controller="Rental" asp-action="Manage">Manage Requests</a>
-                        </li>
-                    }
-                    @if (User.Identity!.IsAuthenticated && User.IsInRole("Admin"))
-                    {
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-controller="Admin" asp-action="Index">Dashboard</a>
-                        </li>
-                    }
-                    <hr class="border-light" />
-                    @if (User.Identity!.IsAuthenticated)
-                    {
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-controller="Account" asp-action="Profile">👤 Profile</a>
-                        </li>
-                        <li class="nav-item pb-2">
-                            <form asp-controller="Account" asp-action="Logout" method="post">
-                                <button class="btn btn-outline-light btn-sm ms-3">Logout</button>
-                            </form>
-                        </li>
-                    }
-                    else
-                    {
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-controller="Account" asp-action="Login">Log in</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-controller="Account" asp-action="Register">Sign up</a>
-                        </li>
-                    }
-                </ul>
-            </div>
+            <footer class="py-3 text-center" style="background-color:#3a6ea8; color:#d0e4f7;">
+                <p class="mb-0">&copy; 2026 House Renting System</p>
+            </footer>
 
-        </div>
-    </nav>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+            <script>
+                const input = document.getElementById('searchInput');
+                const dropdown = document.getElementById('searchDropdown');
 
-    <main class="py-4 flex-grow-1">
-        <div class="container">
-            @RenderBody()
-        </div>
-    </main>
-
-    <footer class="py-3 text-center" style="background-color:#3a6ea8; color:#d0e4f7;">
-        <p class="mb-0">&copy; 2026 House Renting System</p>
-    </footer>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        const input = document.getElementById('searchInput');
-        const dropdown = document.getElementById('searchDropdown');
-
-        if (input) {
-            input.addEventListener('input', async function () {
+                if (input) {
+                input.addEventListener('input', async function () {
                 const query = this.value.trim();
                 if (query.length < 2) {
-                    dropdown.classList.add('d-none');
-                    dropdown.innerHTML = '';
-                    return;
+                dropdown.classList.add('d-none');
+                dropdown.innerHTML = '';
+                return;
                 }
 
                 const res = await fetch(`/api/houses?search=${encodeURIComponent(query)}`);
                 const houses = await res.json();
 
                 if (houses.length === 0) {
-                    dropdown.innerHTML = '<div class="p-3 text-muted">No results found</div>';
+                dropdown.innerHTML = '<div class="p-3 text-muted">No results found</div>';
                 } else {
-                    dropdown.innerHTML = `
-                        <div class="p-2 text-muted small fw-bold border-bottom">HOUSES</div>
-                        ${houses.map(h => `
-                            <a href="/House/Details/${h.houseId}" class="d-flex align-items-center gap-3 p-3 text-decoration-none border-bottom search-item">
-                                <img src="${h.imageUrl || '/images/no-image.png'}" 
-                                    style="width:60px; height:60px; object-fit:cover; border-radius:8px;" />
-                                <div>
-                                    <div class="fw-bold text-dark">${h.title}</div>
-                                    <div class="text-muted small">${h.address}, ${h.city}</div>
-                                    <div class="text-success small">$${h.price} / month</div>
-                                </div>
-                            </a>
-                        `).join('')}
-                        <a href="/House?search=${encodeURIComponent(query)}" 
-                        class="d-block text-center p-2 text-primary small">
-                        View all results for "${query}"
-                        </a>
-                    `;
+                dropdown.innerHTML = `
+                <div class="p-2 text-muted small fw-bold border-bottom">HOUSES</div>
+                ${houses.map(h => `
+                <a href="/House/Details/${h.houseId}" class="d-flex align-items-center gap-3 p-3 text-decoration-none border-bottom search-item">
+                <img src="${h.imageUrl || '/images/no-image.png'}" 
+                style="width:60px; height:60px; object-fit:cover; border-radius:8px;" />
+                <div>
+                <div class="fw-bold text-dark">${h.title}</div>
+                <div class="text-muted small">${h.address}, ${h.city}</div>
+                <div class="text-success small">$${h.MonthlyPrice} / month</div>
+                </div>
+                </a>
+                `).join('')}
+                <a href="/House?search=${encodeURIComponent(query)}" 
+                class="d-block text-center p-2 text-primary small">
+                View all results for "${query}"
+                </a>
+                `;
                 }
 
                 dropdown.classList.remove('d-none');
-            });
+                });
 
-            document.addEventListener('click', function (e) {
+                document.addEventListener('click', function (e) {
                 if (!document.getElementById('searchWrapper').contains(e.target)) {
-                    dropdown.classList.add('d-none');
+                dropdown.classList.add('d-none');
                 }
-            });
-        }
-</script>
-<!-- Mobile Bottom Navigation -->
-<nav class="mobile-bottom-nav d-lg-none">
+                });
+                }
+            </script>
+            <!-- Mobile Bottom Navigation -->
+            <nav class="mobile-bottom-nav d-lg-none">
 
-    <a asp-controller="Home" asp-action="Index"
-       class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" ? "active" : "")">
-        <i class="bi bi-house-door"></i>
-        <span>Home</span>
-    </a>
+                <a asp-controller="Home" asp-action="Index"
+                   class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" ? "active" : "")">
+                    <i class="bi bi-house-heart"></i>
+                    <span>Home</span>
+                </a>
 
-    <a asp-controller="House" asp-action="Index"
-       class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "House" ? "active" : "")">
-        <i class="bi bi-buildings"></i>
-        <span>Houses</span>
-    </a>
+                <a asp-controller="House" asp-action="Index"
+                   class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "House" ? "active" : "")">
+                    <i class="bi bi-buildings"></i>
+                    <span>Houses</span>
+                </a>
 
-    <a asp-controller="Home" asp-action="Contact"
-       class="@(ViewContext.RouteData.Values["action"]?.ToString() == "Contact" ? "active" : "")">
-        <i class="bi bi-envelope"></i>
-        <span>Contact</span>
-    </a>
+                <a asp-controller="Home" asp-action="Contact"
+                   class="@(ViewContext.RouteData.Values["action"]?.ToString() == "Contact" ? "active" : "")">
+                    <i class="bi bi-envelope"></i>
+                    <span>Contact</span>
+                </a>
 
-    @if (User.Identity!.IsAuthenticated)
-    {
-        <a asp-controller="Account" asp-action="Profile">
-            <i class="bi bi-person-circle"></i>
-            <span>Profile</span>
-        </a>
-    }
-    else
-    {
-        <a asp-controller="Account" asp-action="Login">
-            <i class="bi bi-box-arrow-in-right"></i>
-            <span>Login</span>
-        </a>
-    }
+                @if (User.Identity!.IsAuthenticated)
+                {
+                    <a asp-controller="Account" asp-action="Profile">
+                        <i class="bi bi-person-circle"></i>
+                        <span>Profile</span>
+                    </a>
+                }
+                else
+                {
+                    <a asp-controller="Account" asp-action="Login">
+                        <i class="bi bi-box-arrow-in-right"></i>
+                        <span>Login</span>
+                    </a>
+                }
 
-</nav>
-</body>
-</html>
+            </nav>
+        </body>
+
+    </html>

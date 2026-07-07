@@ -8,6 +8,7 @@
     var allImages = new List<string>();
     if (!string.IsNullOrEmpty(Model.ImageUrl)) allImages.Add(Model.ImageUrl);
     allImages.AddRange(Model.HouseImages.Select(i => i.ImageUrl));
+    allImages = allImages.Distinct().ToList();
 
     <div id="houseCarousel" class="carousel slide mb-4" data-bs-ride="carousel">
         <div class="carousel-indicators">
@@ -65,7 +66,7 @@
                 <small class="text-muted">Bathrooms</small>
             </div>
             <div class="col">
-                <h5 class="text-success">$@Model.Price</h5>
+                <h5 class="text-success">$@Model.MonthlyPrice</h5>
                 <small class="text-muted">Per month</small>
             </div>
             <div class="col">

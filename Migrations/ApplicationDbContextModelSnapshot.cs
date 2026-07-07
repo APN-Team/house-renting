@@ -233,6 +233,18 @@ namespace house_renting.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("AllowYearlyRental")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("ApprovedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ApprovedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<double>("Area")
+                        .HasColumnType("REAL");
+
                     b.Property<int>("Bathrooms")
                         .HasColumnType("INTEGER");
 
@@ -257,11 +269,13 @@ namespace house_renting.Migrations
                     b.Property<string>("ImageUrl")
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("IsApproved")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("LandlordId")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<decimal>("Price")
+                    b.Property<decimal>("MonthlyPrice")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Status")
@@ -270,6 +284,9 @@ namespace house_renting.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("YearlyDiscountPercent")
                         .HasColumnType("TEXT");
 
                     b.HasKey("HouseId");
@@ -466,8 +483,7 @@ namespace house_renting.Migrations
                     b.HasOne("house_renting.Models.ApplicationUser", "Landlord")
                         .WithMany()
                         .HasForeignKey("LandlordId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Landlord");
                 });

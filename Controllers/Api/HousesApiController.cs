@@ -75,10 +75,10 @@ public class HousesApiController : ControllerBase
             query = query.Where(h => h.City == city);
 
         if (minPrice.HasValue)
-            query = query.Where(h => h.Price >= minPrice.Value);
+            query = query.Where(h => h.MonthlyPrice >= minPrice.Value);
 
         if (maxPrice.HasValue)
-            query = query.Where(h => h.Price <= maxPrice.Value);
+            query = query.Where(h => h.MonthlyPrice <= maxPrice.Value);
 
         if (bedrooms.HasValue)
             query = query.Where(h => h.Bedrooms == bedrooms.Value);
@@ -102,7 +102,7 @@ public class HousesApiController : ControllerBase
                 Description = h.Description,
                 Address = h.Address,
                 City = h.City,
-                Price = h.Price,
+                Price = h.MonthlyPrice,
                 Bedrooms = h.Bedrooms,
                 Bathrooms = h.Bathrooms,
                 Status = h.Status,
@@ -148,7 +148,7 @@ public class HousesApiController : ControllerBase
                 Description = h.Description,
                 Address = h.Address,
                 City = h.City,
-                Price = h.Price,
+                Price = h.MonthlyPrice,
                 Bedrooms = h.Bedrooms,
                 Bathrooms = h.Bathrooms,
                 Status = h.Status,
