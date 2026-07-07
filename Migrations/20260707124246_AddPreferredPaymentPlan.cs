@@ -15,7 +15,7 @@ namespace house_renting.Migrations
                 table: "AspNetUsers",
                 type: "TEXT",
                 nullable: false,
-                defaultValue: "Monthly");
+                defaultValue: "");
         }
 
         /// <inheritdoc />

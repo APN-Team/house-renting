@@ -11,13 +11,13 @@ using house_renting.Data;
 namespace house_renting.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260707100000_AddPreferredPaymentPlan")]
+    [Migration("20260707124246_AddPreferredPaymentPlan")]
     partial class AddPreferredPaymentPlan
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
-            #pragma warning disable 612, 618
+#pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.9");
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

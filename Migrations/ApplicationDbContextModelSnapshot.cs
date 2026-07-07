@@ -194,6 +194,10 @@ namespace house_renting.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("PreferredPaymentPlan")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("ProfileImage")
                         .HasColumnType("TEXT");
 
