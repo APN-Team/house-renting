@@ -13,11 +13,11 @@
                     @if (!string.IsNullOrEmpty(Model.ProfileImage))
                     {
                         <img src="@Model.ProfileImage"
-                             style="width:90px; height:90px; border-radius:50%; object-fit:cover; border:3px solid #3a6ea8;" />
+                             style="width:90px; height:90px; border-radius:50%; object-fit:cover; border:3px solid #0d2f73;" />
                     }
                     else
                     {
-                        <div style="width:90px; height:90px; border-radius:50%; background-color:#3a6ea8; color:white; font-size:2.5rem; display:flex; align-items:center; justify-content:center; margin:0 auto;">
+                        <div style="width:90px; height:90px; border-radius:50%; background-color:#0d2f73; color:white; font-size:2.5rem; display:flex; align-items:center; justify-content:center; margin:0 auto;">
                             @Model.FullName.Substring(0, 1).ToUpper()
                         </div>
                     }

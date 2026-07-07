@@ -6,109 +6,199 @@
 
 <section class="hero">
 
-    <div class="hero-overlay">
+    <div class="hero-overlay"></div>
 
-        <h1>Find Your Perfect Home</h1>
+    <div class="hero-content container">
+
+        <h1>
+            Find Your Perfect Home
+        </h1>
 
         <p>
             Browse thousands of apartments & houses for rent across Cambodia
         </p>
 
-        <!-- House Type Selector -->
-
         <div class="house-types">
 
-            <button class="active" data-type="">
-                🏠 House
+            <button class="type-btn active" data-type="">
+                <i class="bi bi-house-fill"></i>
+                House
             </button>
 
-            <button data-type="Villa">
-                🏡 Villa
+            <button class="type-btn" data-type="Villa">
+                <i class="bi bi-house-door"></i>
+                Villa
             </button>
 
-            <button data-type="Condo">
-                🏢 Condo
+            <button class="type-btn" data-type="Condo">
+                <i class="bi bi-building"></i>
+                Condo
             </button>
 
-            <button data-type="Apartment">
-                🏬 Apartment
+            <button class="type-btn" data-type="Apartment">
+                <i class="bi bi-buildings"></i>
+                Apartment
             </button>
 
-            <button data-type="Studio">
-                🛏 Studio
+            <button class="type-btn" data-type="Studio">
+                <i class="bi bi-door-open"></i>
+                Studio
             </button>
 
         </div>
 
         <!-- Search -->
-        <!-- Search -->
 
-        <div class="search-box position-relative mx-auto" style="max-width:600px;">
-            <input type="text" id="heroSearchInput" class="form-control rounded-pill px-4"
-                placeholder="Search by city, house type, or keyword..." autocomplete="off" />
-            <div id="heroSearchDropdown" class="position-absolute bg-white shadow rounded w-100 d-none text-start"
-                style="top:100%; margin-top:8px; z-index:9999; max-height:400px; overflow-y:auto;">
+        <div class="search-box position-relative mx-auto">
+
+            <div class="search-bar-group">
+
+                <select id="heroTypeSelect" class="type-select">
+                    <option value="">All Types</option>
+                    <option value="House">House</option>
+                    <option value="Villa">Villa</option>
+                    <option value="Condo">Condo</option>
+                    <option value="Apartment">Apartment</option>
+                    <option value="Studio">Studio</option>
+                </select>
+
+                <input
+                    type="text"
+                    id="heroSearchInput"
+                    class="hero-search"
+                    placeholder="Search by city, house type, or keyword..."
+                    autocomplete="off">
+
+                <select id="heroPaymentSelect" class="payment-select">
+                    <option value="Monthly">Monthly</option>
+                    <option value="Yearly">Yearly</option>
+                </select>
+
+                <button type="button" class="search-icon-btn" id="heroSearchBtn">
+                    <i class="bi bi-search"></i>
+                </button>
+
             </div>
+
+            <div id="heroSearchDropdown"
+                 class="bg-white rounded shadow d-none">
+
+            </div>
+
         </div>
 
     </div>
+
 </section>
+
 <script>
-    const heroInput = document.getElementById('heroSearchInput');
-    const heroDropdown = document.getElementById('heroSearchDropdown');
-    let heroDebounce;
+const heroInput = document.getElementById('heroSearchInput');
+const heroDropdown = document.getElementById('heroSearchDropdown');
 
-    heroInput.addEventListener('input', function () {
-        clearTimeout(heroDebounce);
-        const query = this.value.trim();
+let heroDebounce;
 
-        if (query.length < 2) {
-            heroDropdown.classList.add('d-none');
-            heroDropdown.innerHTML = '';
-            return;
-        }
+heroInput.addEventListener('input', function () {
 
-        heroDebounce = setTimeout(async () => {
-            try {
-                const res = await fetch(`/api/houses?search=${encodeURIComponent(query)}&pageSize=6`);
-                const json = await res.json();
-                const houses = json.data.houses;
+    clearTimeout(heroDebounce);
 
-                if (houses.length === 0) {
-                    heroDropdown.innerHTML = '<div class="p-3 text-muted">No results found</div>';
-                } else {
-                    heroDropdown.innerHTML = `
-                        <div class="p-2 text-muted small fw-bold border-bottom">HOUSES</div>
-                        ${houses.map(h => `
-                            <a href="/House/Details/${h.houseId}" class="d-flex align-items-center gap-3 p-3 text-decoration-none border-bottom search-item">
-                                <img src="${h.imageUrl || '/images/no-image.png'}"
-                                     style="width:60px; height:60px; object-fit:cover; border-radius:8px;" />
-                                <div>
-                                    <div class="fw-bold text-dark">${h.title}</div>
-                                    <div class="text-muted small">${h.address}, ${h.city}</div>
-                                    <div class="text-success small">$${h.price} / month</div>
+    const query = this.value.trim();
+
+    if (query.length < 2){
+
+        heroDropdown.classList.add('d-none');
+        heroDropdown.innerHTML = '';
+
+        return;
+    }
+
+    heroDebounce = setTimeout(async ()=>{
+
+        try{
+
+            const res =
+                await fetch(`/api/houses?search=${encodeURIComponent(query)}&pageSize=6`);
+
+            const json = await res.json();
+
+            const houses = json.data.houses;
+
+            if(houses.length===0){
+
+                heroDropdown.innerHTML =
+                    '<div class="p-3 text-muted">No results found</div>';
+
+            }else{
+
+                heroDropdown.innerHTML = `
+
+                    <div class="p-2 border-bottom fw-bold text-secondary">
+                        HOUSES
+                    </div>
+
+                    ${houses.map(h=>`
+
+                        
+                            href="/House/Details/${h.houseId}"
+                            class="search-item d-flex gap-3 text-decoration-none border-bottom">
+
+                            <img
+                                src="${h.imageUrl || '/images/no-image.png'}">
+
+                            <div>
+
+                                <div class="fw-bold text-dark">
+                                    ${h.title}
                                 </div>
-                            </a>
-                        `).join('')}
-                        <a href="/House?search=${encodeURIComponent(query)}"
-                           class="d-block text-center p-2 text-primary small">
-                            View all results for "${query}"
+
+                                <div class="small text-muted">
+                                    ${h.address}, ${h.city}
+                                </div>
+
+                                <div class="small text-primary">
+                                    $${h.price}/month
+                                </div>
+
+                            </div>
+
                         </a>
-                    `;
-                }
 
-                heroDropdown.classList.remove('d-none');
-            } catch (err) {
-                console.error('Search failed:', err);
-                heroDropdown.innerHTML = '<div class="p-3 text-danger">Something went wrong</div>';
-                heroDropdown.classList.remove('d-none');
+                    `).join('')}
+
+                    
+                        href="/House?search=${encodeURIComponent(query)}"
+                        class="d-block text-center p-3">
+
+                        View all results
+
+                    </a>
+
+                `;
             }
-        }, 250);
-    });
 
-    document.addEventListener('click', function (e) {
-        if (!document.querySelector('.search-box').contains(e.target)) {
-            heroDropdown.classList.add('d-none');
+            heroDropdown.classList.remove('d-none');
+
         }
-    });
+
+        catch{
+
+            heroDropdown.innerHTML =
+                '<div class="p-3 text-danger">Search failed</div>';
+
+            heroDropdown.classList.remove('d-none');
+
+        }
+
+    },250);
+
+});
+
+document.addEventListener('click',function(e){
+
+    if(!document.querySelector('.search-box').contains(e.target)){
+
+        heroDropdown.classList.add('d-none');
+
+    }
+
+});
 </script>
