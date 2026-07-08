@@ -297,7 +297,7 @@ namespace house_renting.Migrations
 
                     b.HasIndex("LandlordId");
 
-                    b.ToTable("Houses");
+                    b.ToTable("Houses", (string)null);
                 });
 
             modelBuilder.Entity("house_renting.Models.HouseImage", b =>
@@ -321,7 +321,7 @@ namespace house_renting.Migrations
 
                     b.HasIndex("HouseId");
 
-                    b.ToTable("HouseImages");
+                    b.ToTable("HouseImages", (string)null);
                 });
 
             modelBuilder.Entity("house_renting.Models.Payment", b =>
@@ -357,7 +357,7 @@ namespace house_renting.Migrations
 
                     b.HasIndex("TenantId");
 
-                    b.ToTable("Payments");
+                    b.ToTable("Payments", (string)null);
                 });
 
             modelBuilder.Entity("house_renting.Models.RentalRequest", b =>
@@ -396,7 +396,7 @@ namespace house_renting.Migrations
 
                     b.HasIndex("TenantId");
 
-                    b.ToTable("RentalRequests");
+                    b.ToTable("RentalRequests", (string)null);
                 });
 
             modelBuilder.Entity("house_renting.Models.Review", b =>
@@ -428,7 +428,7 @@ namespace house_renting.Migrations
 
                     b.HasIndex("TenantId");
 
-                    b.ToTable("Reviews");
+                    b.ToTable("Reviews", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

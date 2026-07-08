@@ -13,3 +13,4 @@ public class Payment
     public ApplicationUser? Tenant { get; set; }
     public House? House { get; set; }
 }
+
